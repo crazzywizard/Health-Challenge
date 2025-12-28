@@ -6,7 +6,9 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: '75 Hard',
     description: 'Track your health challenges and stay motivated',
     start_url: '/',
+    scope: '/',
     display: 'standalone',
+    orientation: 'portrait',
     background_color: '#0a0a0a',
     theme_color: '#0a0a0a',
     icons: [
@@ -14,17 +16,26 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/icon-192x192.png',
         sizes: '192x192',
         type: 'image/png',
+        purpose: 'maskable',
+      },
+      {
+        src: '/icon-192x192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any',
       },
       {
         src: '/icon-512x512.png',
         sizes: '512x512',
         type: 'image/png',
+        purpose: 'maskable',
       },
       {
-        src: '/apple-touch-icon.png',
-        sizes: '180x180',
+        src: '/icon-512x512.png',
+        sizes: '512x512',
         type: 'image/png',
-      }
+        purpose: 'any',
+      },
     ],
   }
 }

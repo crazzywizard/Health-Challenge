@@ -21,10 +21,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "75 Hard Challenge",
   description: "Track your health challenges and stay motivated",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "75 Hard",
+    startupImage: "/icon-512x512.png",
   },
   formatDetection: {
     telephone: false,
