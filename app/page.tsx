@@ -5,6 +5,7 @@ import Link from 'next/link';
 import LoginPage from '@/components/LoginPage';
 import CreateChallengeModal from '@/components/CreateChallengeModal';
 import DeleteChallengeModal from '@/components/DeleteChallengeModal';
+import InstallPWA from '@/components/InstallPWA';
 import { ChallengeWithDetails } from '@/app/types';
 
 export default function Home() {
@@ -183,6 +184,8 @@ export default function Home() {
               Track your health challenges and stay motivated
             </p>
           </div>
+
+          <InstallPWA />
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 mb-8 animate-slide-up">
