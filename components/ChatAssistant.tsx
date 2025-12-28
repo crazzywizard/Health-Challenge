@@ -62,8 +62,6 @@ export default function ChatAssistant() {
     if (textarea) textarea.style.height = 'auto';
   };
 
-  if (!isReady) return null;
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -75,6 +73,8 @@ export default function ChatAssistant() {
       scrollToBottom();
     }
   }, [messages, isOpen]);
+
+  if (!isReady) return null;
 
   return (
     <>
