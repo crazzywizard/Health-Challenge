@@ -38,7 +38,16 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error fetching challenges:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      const isFetchError = error.message?.includes('fetch failed');
+      return NextResponse.json(
+        { 
+          error: isFetchError 
+            ? 'Supabase fetch failed. This usually indicates a configuration or connection issue in production.' 
+            : error.message,
+          details: isFetchError ? 'Check if NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are correctly set.' : undefined
+        }, 
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
@@ -146,8 +155,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data: completeChallenge }, { status: 201 });
   } catch (error) {
     console.error('Error in POST /api/challenges:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: message },
       { status: 500 }
     );
   }
