@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
         challenge_id: input.challenge_id,
         name: input.name,
         email: input.email || null,
+        profile_id: input.profile_id || null,
       })
       .select()
       .single();

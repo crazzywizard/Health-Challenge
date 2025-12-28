@@ -33,6 +33,7 @@ CREATE TABLE participants (
   challenge_id UUID NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   email TEXT,
+  profile_id UUID REFERENCES profiles(id),
   joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

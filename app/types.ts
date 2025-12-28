@@ -37,6 +37,7 @@ export interface Participant {
   challenge_id: string;
   name: string;
   email: string | null;
+  profile_id?: string;
   joined_at: string;
 }
 
@@ -84,6 +85,7 @@ export interface CreateParticipantInput {
   challenge_id: string;
   name: string;
   email?: string;
+  profile_id?: string;
 }
 
 export interface UpdateProgressInput {

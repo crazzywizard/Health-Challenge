@@ -14,6 +14,14 @@ export default function ChallengeDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showAddParticipant, setShowAddParticipant] = useState(false);
+  const [profileId, setProfileId] = useState<string | null>(null);
+  const [isJoining, setIsJoining] = useState(false);
+  
+  useEffect(() => {
+    // Get current profile
+    const currentProfileId = localStorage.getItem('current_profile_id');
+    setProfileId(currentProfileId);
+  }, []);
   const [selectedDate] = useState(() => {
     const today = new Date();
     return today.toLocaleDateString('en-CA'); // YYYY-MM-DD format
@@ -34,6 +42,39 @@ export default function ChallengeDetailsPage() {
       setError('Failed to fetch challenge details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleJoinChallenge = async () => {
+    if (!profileId || !challenge) return;
+    
+    // Check if already joined (just in case)
+    const alreadyJoined = challenge.participants.some(p => p.profile_id === profileId);
+    if (alreadyJoined) return;
+
+    setIsJoining(true);
+    try {
+      const profileName = localStorage.getItem('current_profile_name') || 'Member';
+      
+      const response = await fetch('/api/participants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          challenge_id: challenge.id,
+          name: profileName,
+          profile_id: profileId,
+        }),
+      });
+
+      if (response.ok) {
+        fetchChallenge(); // Refresh
+      } else {
+        console.error('Failed to join challenge');
+      }
+    } catch (err) {
+      console.error('Error joining challenge:', err);
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -149,11 +190,30 @@ export default function ChallengeDetailsPage() {
             </button>
             <button
               onClick={() => setShowAddParticipant(true)}
-              className="btn btn-primary text-xs sm:text-sm py-2 px-3 sm:px-4"
+              className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors sm:hidden"
+              title="Add Other Participant"
             >
-              <span className="hidden sm:inline">Add Participant</span>
-              <span className="sm:hidden">Add</span>
+               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
             </button>
+            
+            {!challenge.participants.some(p => p.profile_id === profileId) ? (
+              <button
+                onClick={handleJoinChallenge}
+                disabled={isJoining}
+                className="btn btn-primary text-xs sm:text-sm py-2 px-3 sm:px-4"
+              >
+                {isJoining ? 'Joining...' : 'Join Challenge'}
+              </button>
+            ) : (
+               <button
+                onClick={() => setShowAddParticipant(true)}
+                className="btn btn-secondary text-xs sm:text-sm py-2 px-3 sm:px-4"
+              >
+                <span>Add Member</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -222,11 +282,19 @@ export default function ChallengeDetailsPage() {
               <div className="card text-center py-12">
                 <p className="text-text-secondary mb-4">No participants added yet.</p>
                 <button
-                  onClick={() => setShowAddParticipant(true)}
-                  className="btn btn-secondary mx-auto"
+                  onClick={handleJoinChallenge}
+                  className="btn btn-primary mx-auto"
                 >
-                  Add Your First Participant
+                  Join Challenge
                 </button>
+                <div className="mt-4">
+                  <button
+                    onClick={() => setShowAddParticipant(true)}
+                    className="text-sm text-primary hover:underline"
+                  >
+                    Add someone else
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6">
