@@ -86,7 +86,7 @@ export default function ChatAssistant() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-24 right-6 w-14 h-14 rounded-full gradient-primary flex items-center justify-center shadow-lg hover:scale-110 transition-all z-40 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+        className={`fixed bottom-24 right-6 w-14 h-14 rounded-full gradient-primary flex items-center justify-center shadow-lg hover:scale-110 transition-all z-[var(--z-chat-btn)] ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
       >
         <MessageSquare className="w-6 h-6 text-white" />
         <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-bounce" />
@@ -94,7 +94,7 @@ export default function ChatAssistant() {
 
       {/* Chat window */}
       <div
-        className={`fixed bottom-24 right-6 w-[90vw] sm:w-[400px] max-h-[600px] glass rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform z-50 origin-bottom-right ${
+        className={`fixed bottom-0 right-0 sm:bottom-24 sm:right-6 w-full sm:w-[400px] h-[100dvh] sm:h-auto sm:max-h-[600px] glass sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform z-[var(--z-chat-window)] origin-bottom-right ${
           isOpen ? 'scale-100 translate-y-0 opacity-100' : 'scale-90 translate-y-10 opacity-0 pointer-events-none'
         }`}
       >

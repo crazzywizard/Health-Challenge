@@ -27,7 +27,7 @@ export default function DeleteChallengeModal({ isOpen, onClose, onConfirm, chall
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+    <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 animate-fade-in">
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
