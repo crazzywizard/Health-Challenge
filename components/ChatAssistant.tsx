@@ -71,8 +71,13 @@ export default function ChatAssistant() {
   useEffect(() => {
     if (isOpen) {
       scrollToBottom();
+      
+      // If there are no messages, trigger an initial motivational quote
+      if (messages.length === 0 && !isLoading) {
+        sendMessage({ text: 'Give me a short, powerful motivational quote to start my health and wellness journey today.' });
+      }
     }
-  }, [messages, isOpen]);
+  }, [messages, isOpen, isLoading, sendMessage]);
 
   if (!isReady) return null;
 
@@ -125,7 +130,9 @@ export default function ChatAssistant() {
               </p>
             </div>
           )}
-          {messages.map((m: UIMessage) => (
+          {messages
+            .filter((m) => !m.parts.some(p => p.type === 'text' && p.text === 'Give me a short, powerful motivational quote to start my health and wellness journey today.'))
+            .map((m: UIMessage) => (
             <div
               key={m.id}
               className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}
@@ -174,14 +181,15 @@ export default function ChatAssistant() {
 
         {/* Input */}
         <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
-          <div className="relative flex items-end gap-2 bg-white/5 border border-white/10 rounded-2xl p-2 px-4 focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+          <div className={`relative flex items-end gap-2 bg-white/5 border border-white/10 rounded-2xl p-2 px-4 transition-all ${isLoading ? 'opacity-50 grayscale cursor-not-allowed' : 'focus-within:ring-2 focus-within:ring-primary/50'}`}>
             <textarea
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Type your question..."
+              disabled={isLoading}
+              placeholder={isLoading ? "AI is thinking..." : "Type your question..."}
               rows={1}
-              className="flex-1 bg-transparent border-none py-2 text-sm focus:outline-none resize-none min-h-[36px] max-h-[120px] scrollbar-hide"
+              className="flex-1 bg-transparent border-none py-2 text-sm focus:outline-none resize-none min-h-[36px] max-h-[120px] scrollbar-hide disabled:cursor-not-allowed"
             />
             <button
               type="submit"
