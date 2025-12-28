@@ -12,7 +12,8 @@ export default function Home() {
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/auth/verify');
-        if (response.ok) {
+        const data = await response.json();
+        if (response.ok && data.authenticated) {
           setIsAuthenticated(true);
         }
       } catch (error) {
