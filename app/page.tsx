@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import LoginPage from '@/components/LoginPage';
 import InstallPWA from '@/components/InstallPWA';
 import { ChallengeWithDetails } from '@/app/types';
 
 export default function Home() {
+  const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
   const [activeChallenge, setActiveChallenge] = useState<ChallengeWithDetails | null>(null);
+  const [profileName, setProfileName] = useState<string>('');
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -17,24 +20,32 @@ export default function Home() {
       try {
         const response = await fetch('/api/auth/verify');
         const data = await response.json();
+        
         if (response.ok && data.authenticated) {
           setIsAuthenticated(true);
+          // Check for profile selection ONLY if authenticated
+          const currentProfileId = localStorage.getItem('current_profile_id');
+          const currentName = localStorage.getItem('current_profile_name');
+          
+          if (!currentProfileId) {
+            router.push('/select-profile');
+          } else {
+            setProfileName(currentName || 'User');
+          }
         }
       } catch (error) {
         console.error('Auth check failed:', error);
       } finally {
-        setIsLoading(false);
+        setIsAuthChecking(false);
       }
     };
 
     checkAuth();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (isAuthenticated) {
       // Fetch only active challenge for dashboard summary
-      // Ideally we'd have a specific endpoint for this, but for now we filter client side
-      // or just fetch all and take the first active one.
       fetch('/api/challenges')
         .then(res => res.json())
         .then(data => {
@@ -49,9 +60,11 @@ export default function Home() {
 
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
+    // After login, always go to select profile
+    router.push('/select-profile');
   };
 
-  if (isLoading) {
+  if (isAuthChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-primary">
         <div className="animate-pulse">
@@ -86,6 +99,10 @@ export default function Home() {
       <header className="glass sticky top-0 z-50 border-b border-border mobile-only pt-[var(--safe-area-top)]">
         <div className="px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold gradient-text">Dashboard</h1>
+           {/* Mini Profile Avatar in Header */}
+           <Link href="/profile" className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-xs text-white font-bold">
+              {profileName.charAt(0).toUpperCase()}
+           </Link>
         </div>
       </header>
 
@@ -93,9 +110,9 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           {/* Welcome Section */}
           <div className="mb-6 sm:mb-8 animate-slide-up">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Welcome Back! 👋</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Hi, {profileName}! 👋</h2>
             <p className="text-text-secondary text-sm sm:text-base">
-              Here is your daily activity overview
+              Ready to crush your goals today?
             </p>
           </div>
 
@@ -117,7 +134,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            {/* ... other stats placeholders ... */}
              <div className="card">
                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 text-center sm:text-left">
                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg gradient-accent flex items-center justify-center">
@@ -133,7 +149,7 @@ export default function Home() {
              </div>
           </div>
 
-          {/* Active Challenge Preview - Optional but nice */}
+          {/* Active Challenge Preview */}
           <div className="mb-8">
             <h3 className="text-xl font-bold mb-4">Active Challenge</h3>
              {activeChallenge ? (

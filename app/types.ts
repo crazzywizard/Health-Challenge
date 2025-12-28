@@ -3,6 +3,13 @@
 export type ChallengeStatus = 'upcoming' | 'active' | 'completed';
 export type RuleType = 'boolean' | 'numeric' | 'text';
 
+export interface Profile {
+  id: string;
+  name: string;
+  avatar_color: string;
+  created_at: string;
+}
+
 export interface Challenge {
   id: string;
   name: string;
