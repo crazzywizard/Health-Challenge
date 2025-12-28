@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun --bun next dev --webpack",
-    "build": "bun --bun next build --webpack",
-    "start": "bun --bun next start",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
