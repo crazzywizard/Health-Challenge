@@ -10,8 +10,18 @@ export default function ChatAssistant() {
   const { messages, sendMessage, status } = useChat();
   const isLoading = status === 'streaming' || status === 'submitted';
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
+    // Auto-resize
+    e.target.style.height = 'auto';
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as any);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,6 +31,10 @@ export default function ChatAssistant() {
     const content = input;
     setInput('');
     sendMessage({ text: content });
+
+    // Reset height of textarea if we can find it
+    const textarea = (e.target as any).querySelector?.('textarea');
+    if (textarea) textarea.style.height = 'auto';
   };
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -132,17 +146,19 @@ export default function ChatAssistant() {
 
         {/* Input */}
         <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
-          <div className="relative">
-            <input
+          <div className="relative flex items-end gap-2 bg-white/5 border border-white/10 rounded-2xl p-2 px-4 focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+            <textarea
               value={input}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               placeholder="Type your question..."
-              className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+              rows={1}
+              className="flex-1 bg-transparent border-none py-2 text-sm focus:outline-none resize-none min-h-[36px] max-h-[120px] scrollbar-hide"
             />
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl gradient-primary flex items-center justify-center disabled:opacity-50 transition-all hover:scale-105"
+              className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center disabled:opacity-50 transition-all hover:scale-105 mb-1 flex-shrink-0"
             >
               <Send className="w-4 h-4 text-white" />
             </button>
