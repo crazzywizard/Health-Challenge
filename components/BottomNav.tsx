@@ -18,7 +18,7 @@ export default function BottomNav() {
     },
     {
       label: 'Challenges',
-      href: '/',
+      href: '/challenges',
       icon: (
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -27,7 +27,7 @@ export default function BottomNav() {
     },
     {
       label: 'History',
-      href: '/',
+      href: '/history',
       icon: (
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -36,9 +36,9 @@ export default function BottomNav() {
     },
     {
       label: 'Profile',
-      href: '/',
+      href: '/profile',
       icon: (
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       ),
@@ -48,7 +48,11 @@ export default function BottomNav() {
   return (
     <nav className="bottom-nav">
       {navItems.map((item) => {
-        const isActive = pathname === item.href;
+        // Active state logic:
+        // - specific path matches exactly
+        // - or if it's not home, and the pathname starts with the href (e.g. /challenges vs /challenges/123)
+        const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+        
         return (
           <Link
             key={item.label}
