@@ -14,7 +14,10 @@ export default function ChallengeDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showAddParticipant, setShowAddParticipant] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [selectedDate] = useState(() => {
+    const today = new Date();
+    return today.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+  });
   const [updatingProgress, setUpdatingProgress] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -208,9 +211,8 @@ export default function ChallengeDetailsPage() {
                   id="date-picker"
                   type="date"
                   value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="bg-surface border-border rounded-lg text-sm"
-                  max={new Date().toISOString().split('T')[0]}
+                  disabled
+                  className="bg-surface border-border rounded-lg text-sm opacity-70 cursor-not-allowed"
                 />
               </div>
             </div>
