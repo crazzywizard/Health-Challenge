@@ -71,8 +71,13 @@ export default function ChatAssistant() {
   useEffect(() => {
     if (isOpen) {
       scrollToBottom();
+      
+      // If there are no messages, trigger an initial motivational quote
+      if (messages.length === 0 && !isLoading) {
+        sendMessage({ text: 'Give me a short, powerful motivational quote to start my health and wellness journey today.' });
+      }
     }
-  }, [messages, isOpen]);
+  }, [messages, isOpen, isLoading, sendMessage]);
 
   if (!isReady) return null;
 
@@ -81,7 +86,7 @@ export default function ChatAssistant() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-24 right-6 w-14 h-14 rounded-full gradient-primary flex items-center justify-center shadow-lg hover:scale-110 transition-all z-40 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+        className={`fixed bottom-24 right-6 w-14 h-14 rounded-full gradient-primary flex items-center justify-center shadow-lg hover:scale-110 transition-all z-[var(--z-chat-btn)] ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
       >
         <MessageSquare className="w-6 h-6 text-white" />
         <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-bounce" />
@@ -89,7 +94,7 @@ export default function ChatAssistant() {
 
       {/* Chat window */}
       <div
-        className={`fixed bottom-24 right-6 w-[90vw] sm:w-[400px] max-h-[600px] glass rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform z-50 origin-bottom-right ${
+        className={`fixed bottom-0 right-0 sm:bottom-24 sm:right-6 w-full sm:w-[400px] h-[100dvh] sm:h-auto sm:max-h-[600px] glass sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform z-[var(--z-chat-window)] origin-bottom-right ${
           isOpen ? 'scale-100 translate-y-0 opacity-100' : 'scale-90 translate-y-10 opacity-0 pointer-events-none'
         }`}
       >
@@ -125,7 +130,9 @@ export default function ChatAssistant() {
               </p>
             </div>
           )}
-          {messages.map((m: UIMessage) => (
+          {messages
+            .filter((m) => !m.parts.some(p => p.type === 'text' && p.text === 'Give me a short, powerful motivational quote to start my health and wellness journey today.'))
+            .map((m: UIMessage) => (
             <div
               key={m.id}
               className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}
@@ -174,14 +181,15 @@ export default function ChatAssistant() {
 
         {/* Input */}
         <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
-          <div className="relative flex items-end gap-2 bg-white/5 border border-white/10 rounded-2xl p-2 px-4 focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+          <div className={`relative flex items-end gap-2 bg-white/5 border border-white/10 rounded-2xl p-2 px-4 transition-all ${isLoading ? 'opacity-50 grayscale cursor-not-allowed' : 'focus-within:ring-2 focus-within:ring-primary/50'}`}>
             <textarea
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Type your question..."
+              disabled={isLoading}
+              placeholder={isLoading ? "AI is thinking..." : "Type your question..."}
               rows={1}
-              className="flex-1 bg-transparent border-none py-2 text-sm focus:outline-none resize-none min-h-[36px] max-h-[120px] scrollbar-hide"
+              className="flex-1 bg-transparent border-none py-2 text-sm focus:outline-none resize-none min-h-[36px] max-h-[120px] scrollbar-hide disabled:cursor-not-allowed"
             />
             <button
               type="submit"

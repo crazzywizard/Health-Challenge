@@ -99,40 +99,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header - Desktop Only mainly, but kept simple */}
-      <header className="glass sticky top-0 z-50 border-b border-border desktop-only">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-           <div className="flex items-center gap-3">
-             <h1 className="text-xl font-bold gradient-text">Health Challenge</h1>
-           </div>
-           <div className="flex items-center gap-4">
-             <Link href="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-               <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-xs text-white font-bold">
-                 {profileName.charAt(0).toUpperCase()}
-               </div>
-               <span className="text-sm font-medium">{profileName}</span>
-             </Link>
-             <button 
-               onClick={handleLogout}
-               className="btn btn-secondary text-sm py-2 px-4 text-red-500 border-red-200 dark:border-red-900/30"
-             >
-               Sign Out
-             </button>
-           </div>
-        </div>
-      </header>
-       
-       {/* Mobile Header */}
-      <header className="glass sticky top-0 z-50 border-b border-border mobile-only pt-[var(--safe-area-top)]">
-        <div className="px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold gradient-text">Dashboard</h1>
-           {/* Mini Profile Avatar in Header */}
-           <Link href="/profile" className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-xs text-white font-bold">
-              {profileName.charAt(0).toUpperCase()}
-           </Link>
-        </div>
-      </header>
-
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Welcome Section */}

@@ -7,6 +7,15 @@
   --primary: #6366f1; /* Indigo */
   --primary-dark: #4f46e5;
   --primary-light: #818cf8;
+
+  /* Z-Indexes */
+  --z-sticky: 50;
+  --z-nav: 50;
+  --z-chat-btn: 60;
+  --z-chat-window: 70;
+  --z-modal-backdrop: 100;
+  --z-modal: 110;
+  --z-toast: 150;
   
   --secondary: #ec4899; /* Pink */
   --secondary-dark: #db2777;
@@ -162,6 +171,29 @@ h6 { font-size: 1.125rem; }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  background: var(--surface-elevated);
+}
+
+.nav-link.active {
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
 }
 
 .card {
@@ -381,8 +413,10 @@ label {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  z-index: 50;
+  z-index: var(--z-nav);
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
 }
 
 .bottom-nav-item {
