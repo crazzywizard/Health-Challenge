@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import LoginPage from '@/components/LoginPage';
 import CreateChallengeModal from '@/components/CreateChallengeModal';
+import DeleteChallengeModal from '@/components/DeleteChallengeModal';
 import { ChallengeWithDetails } from '@/app/types';
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [challenges, setChallenges] = useState<ChallengeWithDetails[]>([]);
   const [loadingChallenges, setLoadingChallenges] = useState(false);
+  const [challengeToDelete, setChallengeToDelete] = useState<ChallengeWithDetails | null>(null);
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -67,6 +69,26 @@ export default function Home() {
       setIsAuthenticated(false);
     } catch (error) {
       console.error('Logout failed:', error);
+    }
+  };
+
+  const handleDeleteChallenge = async () => {
+    if (!challengeToDelete) return;
+    try {
+      const response = await fetch(`/api/challenges/${challengeToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setChallengeToDelete(null);
+        fetchChallenges();
+      } else {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete challenge');
+      }
+    } catch (error) {
+      console.error('Failed to delete challenge:', error);
+      throw error;
     }
   };
 
@@ -319,12 +341,23 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <Link 
-                        href={`/challenges/${challenge.id}`}
-                        className="btn btn-secondary text-sm"
-                      >
-                        View Details
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setChallengeToDelete(challenge)}
+                          className="p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
+                          title="Delete Challenge"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                        <Link 
+                          href={`/challenges/${challenge.id}`}
+                          className="btn btn-secondary text-sm"
+                        >
+                          View Details
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -340,6 +373,16 @@ export default function Home() {
         onClose={() => setShowCreateModal(false)}
         onSuccess={handleCreateSuccess}
       />
+
+      {/* Delete Challenge Modal */}
+      {challengeToDelete && (
+        <DeleteChallengeModal
+          isOpen={!!challengeToDelete}
+          onClose={() => setChallengeToDelete(null)}
+          onConfirm={handleDeleteChallenge}
+          challengeName={challengeToDelete.name}
+        />
+      )}
     </div>
   );
 }

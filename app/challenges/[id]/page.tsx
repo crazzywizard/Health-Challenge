@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChallengeWithDetails, DailyProgress } from '@/app/types';
 import AddParticipantModal from '@/components/AddParticipantModal';
+import DeleteChallengeModal from '@/components/DeleteChallengeModal';
 
 export default function ChallengeDetailsPage() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ export default function ChallengeDetailsPage() {
   const [showAddParticipant, setShowAddParticipant] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [updatingProgress, setUpdatingProgress] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchChallenge = async () => {
     try {
@@ -60,6 +62,24 @@ export default function ChallengeDetailsPage() {
       console.error('Failed to update progress:', err);
     } finally {
       setUpdatingProgress(null);
+    }
+  };
+
+  const handleDeleteChallenge = async () => {
+    try {
+      const response = await fetch(`/api/challenges/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        router.push('/');
+      } else {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete challenge');
+      }
+    } catch (err) {
+      console.error('Failed to delete challenge:', err);
+      throw err;
     }
   };
 
@@ -114,12 +134,23 @@ export default function ChallengeDetailsPage() {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setShowAddParticipant(true)}
-            className="btn btn-primary text-sm"
-          >
-            Add Participant
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
+              title="Delete Challenge"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setShowAddParticipant(true)}
+              className="btn btn-primary text-sm"
+            >
+              Add Participant
+            </button>
+          </div>
         </div>
       </header>
 
@@ -261,6 +292,13 @@ export default function ChallengeDetailsPage() {
         onClose={() => setShowAddParticipant(false)}
         onSuccess={fetchChallenge}
         challengeId={challenge.id}
+      />
+
+      <DeleteChallengeModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteChallenge}
+        challengeName={challenge.name}
       />
     </div>
   );
