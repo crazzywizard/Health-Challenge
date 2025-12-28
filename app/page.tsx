@@ -64,6 +64,19 @@ export default function Home() {
     router.push('/select-profile');
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      localStorage.removeItem('current_profile_id');
+      localStorage.removeItem('current_profile_name');
+      setIsAuthenticated(false);
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   if (isAuthChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-primary">
@@ -91,6 +104,20 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
            <div className="flex items-center gap-3">
              <h1 className="text-xl font-bold gradient-text">Health Challenge</h1>
+           </div>
+           <div className="flex items-center gap-4">
+             <Link href="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+               <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-xs text-white font-bold">
+                 {profileName.charAt(0).toUpperCase()}
+               </div>
+               <span className="text-sm font-medium">{profileName}</span>
+             </Link>
+             <button 
+               onClick={handleLogout}
+               className="btn btn-secondary text-sm py-2 px-4 text-red-500 border-red-200 dark:border-red-900/30"
+             >
+               Sign Out
+             </button>
            </div>
         </div>
       </header>
