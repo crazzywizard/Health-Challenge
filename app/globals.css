@@ -11,8 +11,8 @@
   /* Z-Indexes */
   --z-sticky: 50;
   --z-nav: 50;
-  --z-chat-btn: 60;
-  --z-chat-window: 70;
+  --z-chat-btn: 80;
+  --z-chat-window: 90;
   --z-modal-backdrop: 100;
   --z-modal: 110;
   --z-toast: 150;

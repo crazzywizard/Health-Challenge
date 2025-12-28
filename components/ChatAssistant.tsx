@@ -94,7 +94,7 @@ export default function ChatAssistant() {
 
       {/* Chat window */}
       <div
-        className={`fixed bottom-0 right-0 sm:bottom-24 sm:right-6 w-full sm:w-[400px] h-[100dvh] sm:h-auto sm:max-h-[600px] glass sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform z-[var(--z-chat-window)] origin-bottom-right ${
+        className={`fixed bottom-0 right-0 sm:bottom-24 sm:right-6 w-full sm:w-[400px] h-[100dvh] sm:h-auto sm:max-h-[600px] bg-background dark:bg-[#111] sm:glass sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform z-[var(--z-chat-window)] origin-bottom-right ${
           isOpen ? 'scale-100 translate-y-0 opacity-100' : 'scale-90 translate-y-10 opacity-0 pointer-events-none'
         }`}
       >
