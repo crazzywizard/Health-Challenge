@@ -7,8 +7,33 @@ import { Bot, MessageSquare, Send, X, User, Sparkles } from 'lucide-react';
 export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
+  const [isReady, setIsReady] = useState(false);
   const { messages, sendMessage, status } = useChat();
   const isLoading = status === 'streaming' || status === 'submitted';
+
+  useEffect(() => {
+    const checkVisibility = async () => {
+      try {
+        const response = await fetch('/api/auth/verify');
+        const data = await response.json();
+        const profileId = localStorage.getItem('current_profile_id');
+        
+        if (response.ok && data.authenticated && profileId) {
+          setIsReady(true);
+        } else {
+          setIsReady(false);
+        }
+      } catch (error) {
+        setIsReady(false);
+      }
+    };
+
+    checkVisibility();
+    
+    // Listen for storage changes in case profile is selected later
+    window.addEventListener('storage', checkVisibility);
+    return () => window.removeEventListener('storage', checkVisibility);
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
@@ -36,6 +61,9 @@ export default function ChatAssistant() {
     const textarea = (e.target as any).querySelector?.('textarea');
     if (textarea) textarea.style.height = 'auto';
   };
+
+  if (!isReady) return null;
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
