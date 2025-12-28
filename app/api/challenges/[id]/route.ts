@@ -26,7 +26,7 @@ export async function GET(
         rules(*),
         participants(
           *,
-          daily_progress(*)
+          progress:daily_progress(*)
         )
       `)
       .eq('id', id)

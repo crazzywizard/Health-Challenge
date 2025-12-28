@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import LoginPage from '@/components/LoginPage';
 import CreateChallengeModal from '@/components/CreateChallengeModal';
 import { ChallengeWithDetails } from '@/app/types';
@@ -318,9 +319,12 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <button className="btn btn-secondary text-sm">
+                      <Link 
+                        href={`/challenges/${challenge.id}`}
+                        className="btn btn-secondary text-sm"
+                      >
                         View Details
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 ))}
