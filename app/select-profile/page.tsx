@@ -104,7 +104,7 @@ export default function SelectProfilePage() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
       <div className="max-w-4xl w-full text-center animate-fade-in">
-        <h1 className="text-3xl md:text-5xl font-bold mb-12">Who's Watching?</h1>
+        <h1 className="text-3xl md:text-5xl font-bold mb-12">Select profile</h1>
         
         <div className="flex flex-wrap justify-center gap-8 mb-12">
           {profiles.map((profile) => (
