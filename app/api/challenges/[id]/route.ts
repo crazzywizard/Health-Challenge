@@ -95,8 +95,9 @@ export async function PUT(
     return NextResponse.json({ data });
   } catch (error) {
     console.error('Error in PUT /api/challenges/[id]:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: message },
       { status: 500 }
     );
   }
@@ -128,8 +129,9 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error in DELETE /api/challenges/[id]:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: message },
       { status: 500 }
     );
   }

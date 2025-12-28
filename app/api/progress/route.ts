@@ -45,8 +45,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ data });
   } catch (error) {
     console.error('Error in GET /api/progress:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: message },
       { status: 500 }
     );
   }
@@ -95,8 +96,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data });
   } catch (error) {
     console.error('Error in POST /api/progress:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: message },
       { status: 500 }
     );
   }
@@ -133,8 +135,9 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ data });
   } catch (error) {
     console.error('Error in PUT /api/progress:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: message },
       { status: 500 }
     );
   }
