@@ -113,16 +113,18 @@ export default function CreateChallengeModal({ isOpen, onClose, onSuccess }: Cre
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass rounded-2xl p-6 animate-scale-in">
+      <div className="relative w-full max-w-2xl max-h-[100vh] sm:max-h-[90vh] overflow-y-auto glass sm:rounded-2xl p-4 sm:p-6 animate-scale-in h-screen sm:h-auto flex flex-col">
+        {/* Safe Area Top Spacer for mobile */}
+        <div className="h-[var(--safe-area-top)] sm:hidden flex-shrink-0" />
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold gradient-text">Create New Challenge</h2>
+        <div className="flex items-center justify-between mb-4 sm:mb-6 flex-shrink-0">
+          <h2 className="text-xl sm:text-2xl font-bold gradient-text">Create Challenge</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full hover:bg-border transition-colors flex items-center justify-center"
+            className="w-10 h-10 sm:w-8 sm:h-8 rounded-full hover:bg-border transition-colors flex items-center justify-center"
             disabled={loading}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -158,16 +160,18 @@ export default function CreateChallengeModal({ isOpen, onClose, onSuccess }: Cre
           </div>
 
           {/* Duration and Start Date */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="duration">Duration (Days) *</label>
               <input
                 id="duration"
                 type="number"
+                inputMode="numeric"
                 min="1"
                 value={durationDays}
                 onChange={(e) => setDurationDays(e.target.value)}
                 disabled={loading}
+                className="h-12"
                 required
               />
             </div>
@@ -179,6 +183,7 @@ export default function CreateChallengeModal({ isOpen, onClose, onSuccess }: Cre
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 disabled={loading}
+                className="h-12"
                 required
               />
             </div>
@@ -201,22 +206,22 @@ export default function CreateChallengeModal({ isOpen, onClose, onSuccess }: Cre
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {rules.map((rule, index) => (
-                <div key={index} className="flex gap-2">
+                <div key={index} className="flex gap-2 items-center">
                   <input
                     type="text"
                     value={rule.description}
                     onChange={(e) => handleRuleChange(index, 'description', e.target.value)}
-                    placeholder={`Rule ${index + 1} (e.g., No sugar, 10k steps, 1 gallon water)`}
+                    placeholder={`Rule ${index + 1}`}
                     disabled={loading}
-                    className="flex-1"
+                    className="flex-1 h-12"
                   />
                   {rules.length > 1 && (
                     <button
                       type="button"
                       onClick={() => handleRemoveRule(index)}
-                      className="w-10 h-10 rounded-lg hover:bg-red-500/20 text-red-500 transition-colors flex items-center justify-center"
+                      className="w-12 h-12 rounded-xl hover:bg-red-500/20 text-red-500 transition-colors flex items-center justify-center flex-shrink-0"
                       disabled={loading}
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,18 +242,18 @@ export default function CreateChallengeModal({ isOpen, onClose, onSuccess }: Cre
           )}
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-4 sm:pt-6 mt-auto sm:mt-0 pb-[var(--safe-area-bottom)]">
             <button
               type="button"
               onClick={onClose}
-              className="btn btn-secondary flex-1"
+              className="btn btn-secondary flex-1 h-12"
               disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn btn-primary flex-1"
+              className="btn btn-primary flex-1 h-12"
               disabled={loading}
             >
               {loading ? (
@@ -257,10 +262,10 @@ export default function CreateChallengeModal({ isOpen, onClose, onSuccess }: Cre
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Creating...
+                  <span>Creating...</span>
                 </>
               ) : (
-                'Create Challenge'
+                'Create'
               )}
             </button>
           </div>

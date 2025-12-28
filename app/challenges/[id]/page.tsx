@@ -122,22 +122,22 @@ export default function ChallengeDetailsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="glass sticky top-0 z-40 border-b border-border">
+      <header className="glass sticky top-0 z-40 border-b border-border pt-[var(--safe-area-top)]">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="p-2 hover:bg-border rounded-full transition-colors">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/" className="p-2 hover:bg-border rounded-full transition-colors flex-shrink-0">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </Link>
-            <div>
-              <h1 className="text-xl font-bold gradient-text">{challenge.name}</h1>
-              <p className="text-xs text-text-secondary">
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-bold gradient-text truncate">{challenge.name}</h1>
+              <p className="text-[10px] sm:text-xs text-text-secondary">
                 {challenge.duration_days} Days • {challenge.status}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3">
             <button
               onClick={() => setShowDeleteModal(true)}
               className="p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
@@ -149,9 +149,10 @@ export default function ChallengeDetailsPage() {
             </button>
             <button
               onClick={() => setShowAddParticipant(true)}
-              className="btn btn-primary text-sm"
+              className="btn btn-primary text-xs sm:text-sm py-2 px-3 sm:px-4"
             >
-              Add Participant
+              <span className="hidden sm:inline">Add Participant</span>
+              <span className="sm:hidden">Add</span>
             </button>
           </div>
         </div>
@@ -163,25 +164,25 @@ export default function ChallengeDetailsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="card md:col-span-2">
               <h3 className="text-lg font-bold mb-4">About Challenge</h3>
-              <p className="text-text-secondary mb-6">
+              <p className="text-text-secondary text-sm sm:text-base mb-6">
                 {challenge.description || 'No description provided.'}
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-border">
                 <div>
-                  <p className="text-xs text-text-tertiary uppercase font-bold mb-1">Start Date</p>
-                  <p className="font-medium">{new Date(challenge.start_date).toLocaleDateString()}</p>
+                  <p className="text-[10px] text-text-tertiary uppercase font-bold mb-1">Start</p>
+                  <p className="text-sm font-medium">{new Date(challenge.start_date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-text-tertiary uppercase font-bold mb-1">End Date</p>
-                  <p className="font-medium">{new Date(challenge.end_date).toLocaleDateString()}</p>
+                  <p className="text-[10px] text-text-tertiary uppercase font-bold mb-1">End</p>
+                  <p className="text-sm font-medium">{new Date(challenge.end_date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-text-tertiary uppercase font-bold mb-1">Rules</p>
-                  <p className="font-medium">{challenge.rules.length}</p>
+                  <p className="text-[10px] text-text-tertiary uppercase font-bold mb-1">Rules</p>
+                  <p className="text-sm font-medium">{challenge.rules.length}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-text-tertiary uppercase font-bold mb-1">Members</p>
-                  <p className="font-medium">{challenge.participants.length}</p>
+                  <p className="text-[10px] text-text-tertiary uppercase font-bold mb-1">Members</p>
+                  <p className="text-sm font-medium">{challenge.participants.length}</p>
                 </div>
               </div>
             </div>
@@ -204,15 +205,15 @@ export default function ChallengeDetailsPage() {
           {/* Progress Tracker */}
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h3 className="text-2xl font-bold">Daily Progress</h3>
-              <div className="flex items-center gap-3">
-                <label htmlFor="date-picker" className="text-sm font-medium">Tracking for:</label>
+              <h3 className="text-xl sm:text-2xl font-bold">Daily Progress</h3>
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <label htmlFor="date-picker" className="text-xs sm:text-sm font-medium whitespace-nowrap">Tracking for:</label>
                 <input
                   id="date-picker"
                   type="date"
                   value={selectedDate}
                   disabled
-                  className="bg-surface border-border rounded-lg text-sm opacity-70 cursor-not-allowed"
+                  className="bg-surface-elevated border-border rounded-lg text-sm opacity-70 cursor-not-allowed flex-1 sm:flex-none"
                 />
               </div>
             </div>
@@ -246,7 +247,7 @@ export default function ChallengeDetailsPage() {
                       </div>
                     </div>
 
-                    <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="p-2 sm:p-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                       {challenge.rules.map((rule) => {
                         const progress = getProgressForDay(participant.id, rule.id);
                         const isCompleted = progress?.completed || false;
@@ -257,16 +258,16 @@ export default function ChallengeDetailsPage() {
                             key={rule.id}
                             disabled={isUpdating}
                             onClick={() => handleToggleProgress(participant.id, rule.id, isCompleted)}
-                            className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+                            className={`flex items-center justify-between p-4 rounded-xl border transition-all touch-manipulation min-h-[4.5rem] ${
                               isCompleted
-                                ? 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400'
-                                : 'bg-surface border-border hover:border-primary/30 text-text-secondary'
+                                ? 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400 shadow-sm'
+                                : 'bg-surface border-border hover:border-primary/30 text-text-secondary active:scale-[0.98]'
                             } ${isUpdating ? 'opacity-50 cursor-wait' : ''}`}
                           >
-                            <span className="text-sm font-medium text-left line-clamp-2">
+                            <span className="text-sm font-semibold text-left line-clamp-2 pr-4 leading-tight">
                               {rule.description}
                             </span>
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center border ${
+                            <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center border-2 ${
                               isCompleted
                                 ? 'bg-green-500 border-green-500 text-white'
                                 : 'border-border'
