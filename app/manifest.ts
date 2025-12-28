@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: '75 Hard Challenge',
-    short_name: '75 Hard',
+    name: 'Health Challenge',
+    short_name: 'Health Challenge',
     description: 'Track your health challenges and stay motivated',
     start_url: '/',
     scope: '/',

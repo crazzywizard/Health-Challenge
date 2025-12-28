@@ -73,7 +73,7 @@ Open [http://localhost:3000](http://localhost:3000)
 ## 🏗️ Project Structure
 
 ```
-75-hard/
+health-challenge/
 ├── app/
 │   ├── api/              # API routes
 │   │   ├── auth/         # Authentication endpoints

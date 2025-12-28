@@ -140,7 +140,7 @@ export default function CreateChallengeModal({ isOpen, onClose, onSuccess }: Cre
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., 75 Hard, 30-Day Fitness"
+              placeholder="e.g., Health Challenge, 30-Day Fitness"
               disabled={loading}
               required
             />

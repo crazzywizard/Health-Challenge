@@ -20,13 +20,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "75 Hard Challenge",
+  title: "Health Challenge",
   description: "Track your health challenges and stay motivated",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "75 Hard",
+    title: "Health Challenge",
     startupImage: "/icon-512x512.png",
   },
   formatDetection: {

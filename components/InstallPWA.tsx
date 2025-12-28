@@ -56,7 +56,7 @@ export default function InstallPWA() {
           </div>
           <div>
             <h3 className="text-lg font-bold">Install App</h3>
-            <p className="text-text-secondary text-sm">Install 75 Hard for a better experience and offline access</p>
+            <p className="text-text-secondary text-sm">Install Health Challenge for a better experience and offline access</p>
           </div>
         </div>
         <button
