@@ -13,6 +13,7 @@ export default function Home() {
   const [isAuthChecking, setIsAuthChecking] = useState(true);
   const [activeChallenge, setActiveChallenge] = useState<ChallengeWithDetails | null>(null);
   const [profileName, setProfileName] = useState<string>('');
+  const [currentProfileId, setCurrentProfileId] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -30,6 +31,7 @@ export default function Home() {
           if (!currentProfileId) {
             router.push('/select-profile');
           } else {
+            setCurrentProfileId(currentProfileId);
             setProfileName(currentName || 'User');
           }
         }
@@ -113,7 +115,6 @@ export default function Home() {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 mb-8 animate-slide-up">
-             {/* Same stats cards as before */}
              <div className="card">
               <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 text-center sm:text-left">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg gradient-primary flex items-center justify-center">
@@ -136,7 +137,9 @@ export default function Home() {
                  </div>
                  <div>
                    <p className="text-text-secondary text-[10px] sm:text-sm uppercase font-bold sm:normal-case sm:font-normal">Streak</p>
-                   <p className="text-lg sm:text-2xl font-bold">0 days</p>
+                   <p className="text-lg sm:text-2xl font-bold">
+                     {activeChallenge?.participants?.find(p => p.profile_id === currentProfileId)?.current_streak || 0} days
+                   </p>
                  </div>
                </div>
              </div>
@@ -152,10 +155,18 @@ export default function Home() {
                    <span className="text-primary text-sm">View &rarr;</span>
                  </div>
                  <p className="text-text-secondary text-sm mb-4 line-clamp-2">{activeChallenge.description}</p>
-                 <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                    <div className="bg-primary h-2.5 rounded-full" style={{ width: '0%' }}></div>
-                 </div>
-                 <p className="text-xs text-text-secondary mt-1 text-right">0% Complete</p>
+                 {(() => {
+                   const participant = activeChallenge.participants?.find(p => p.profile_id === currentProfileId);
+                   const percentage = participant?.completion_percentage || 0;
+                   return (
+                     <>
+                      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                         <div className="bg-primary h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
+                      </div>
+                      <p className="text-xs text-text-secondary mt-1 text-right">{percentage}% Complete</p>
+                     </>
+                   );
+                 })()}
                </div>
              ) : (
                 <div className="card text-center py-8">
