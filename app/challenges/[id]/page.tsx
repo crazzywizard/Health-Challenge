@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChallengeWithDetails, DailyProgress } from '@/app/types';
 import AddParticipantModal from '@/components/AddParticipantModal';
 import DeleteChallengeModal from '@/components/DeleteChallengeModal';
@@ -304,8 +305,17 @@ export default function ChallengeDetailsPage() {
                   <div key={participant.id} className="card overflow-hidden !p-0">
                     <div className="p-4 bg-surface-elevated border-b border-border flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center text-white font-bold">
-                          {participant.name.charAt(0)}
+                        <div className={`w-10 h-10 rounded-full ${participant.profile?.avatar_color || 'gradient-primary'} flex items-center justify-center text-white font-bold overflow-hidden relative`}>
+                          {participant.profile?.avatar_url ? (
+                            <Image 
+                              src={participant.profile.avatar_url} 
+                              alt={participant.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            participant.name.charAt(0)
+                          )}
                         </div>
                         <div>
                           <h4 className="font-bold">{participant.name}</h4>

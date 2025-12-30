@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Profile } from '@/app/types';
+import AvatarPicker from '@/components/AvatarPicker';
 
 export default function SelectProfilePage() {
   const router = useRouter();
@@ -10,6 +12,7 @@ export default function SelectProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState<string | undefined>();
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
@@ -46,6 +49,8 @@ export default function SelectProfilePage() {
     // Store selected profile ID
     localStorage.setItem('current_profile_id', profile.id);
     localStorage.setItem('current_profile_name', profile.name);
+    localStorage.setItem('current_profile_avatar', profile.avatar_url || '');
+    localStorage.setItem('current_profile_color', profile.avatar_color);
     
     // Redirect to Dashboard
     router.push('/');
@@ -73,13 +78,15 @@ export default function SelectProfilePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: newProfileName,
-          avatar_color: randomGradient
+          avatar_color: randomGradient,
+          avatar_url: selectedAvatarUrl
         }),
       });
 
       const data = await res.json();
       if (res.ok) {
         setNewProfileName('');
+        setSelectedAvatarUrl(undefined);
         setIsCreating(false);
         // Refresh list
         checkAuthAndFetchProfiles();
@@ -113,8 +120,17 @@ export default function SelectProfilePage() {
               onClick={() => handleSelectProfile(profile)}
               className="group cursor-pointer flex flex-col items-center gap-3 w-32"
             >
-              <div className={`w-32 h-32 rounded-lg ${profile.avatar_color} shadow-lg group-hover:ring-4 group-hover:ring-white transition-all transform group-hover:scale-105 flex items-center justify-center`}>
-                 <span className="text-4xl font-bold text-white opacity-80 uppercase">{profile.name.charAt(0)}</span>
+              <div className={`w-32 h-32 rounded-lg ${profile.avatar_color} shadow-lg group-hover:ring-4 group-hover:ring-white transition-all transform group-hover:scale-105 flex items-center justify-center overflow-hidden relative`}>
+                 {profile.avatar_url ? (
+                   <Image 
+                     src={profile.avatar_url} 
+                     alt={profile.name}
+                     fill
+                     className="object-cover"
+                   />
+                 ) : (
+                   <span className="text-4xl font-bold text-white opacity-80 uppercase">{profile.name.charAt(0)}</span>
+                 )}
               </div>
               <span className="text-lg text-gray-400 group-hover:text-white transition-colors">{profile.name}</span>
             </div>
@@ -138,19 +154,29 @@ export default function SelectProfilePage() {
       {/* Create Profile Modal */}
       {isCreating && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-fade-in">
-          <div className="bg-[#141414] p-8 rounded-lg max-w-md w-full border border-gray-800">
+          <div className="bg-[#141414] p-8 rounded-lg max-w-xl w-full border border-gray-800 max-h-[90vh] overflow-y-auto">
              <h2 className="text-2xl font-bold mb-6">Add Profile</h2>
              <form onSubmit={handleCreateProfile}>
                <div className="mb-6">
+                 <label className="block text-gray-400 text-sm font-medium mb-2 uppercase tracking-wider">Name</label>
                  <input 
                    type="text" 
                    value={newProfileName}
                    onChange={(e) => setNewProfileName(e.target.value)}
-                   placeholder="Name"
+                   placeholder="Enter your name"
                    className="w-full bg-[#333] border-none text-white placeholder-gray-500 rounded p-3 focus:ring-2 focus:ring-white"
                    autoFocus
                  />
                </div>
+
+               <div className="mb-8">
+                 <label className="block text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Choose an Icon</label>
+                 <AvatarPicker 
+                   onSelect={(url) => setSelectedAvatarUrl(url)}
+                   currentUrl={selectedAvatarUrl}
+                 />
+               </div>
+
                <div className="flex gap-4">
                  <button 
                    type="submit"

@@ -27,6 +27,16 @@ CREATE TABLE rules (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Profiles table
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  avatar_color TEXT NOT NULL,
+  avatar_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Participants table
 CREATE TABLE participants (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -79,6 +89,11 @@ CREATE TRIGGER update_daily_progress_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER update_profiles_updated_at
+  BEFORE UPDATE ON profiles
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
 -- Row Level Security (RLS) Policies
 -- For now, we'll keep it simple since we're using shared password auth
 -- You can enable RLS later if needed
@@ -87,9 +102,11 @@ ALTER TABLE challenges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE participants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_progress ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- Allow all operations for now (we'll handle auth in the app layer)
 CREATE POLICY "Allow all operations on challenges" ON challenges FOR ALL USING (true);
 CREATE POLICY "Allow all operations on rules" ON rules FOR ALL USING (true);
 CREATE POLICY "Allow all operations on participants" ON participants FOR ALL USING (true);
 CREATE POLICY "Allow all operations on daily_progress" ON daily_progress FOR ALL USING (true);
+CREATE POLICY "Allow all operations on profiles" ON profiles FOR ALL USING (true);

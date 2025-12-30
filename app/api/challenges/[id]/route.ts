@@ -27,6 +27,7 @@ export async function GET(
         rules(*),
         participants(
           *,
+          profile:profiles(id, avatar_url, avatar_color),
           progress:daily_progress(*)
         )
       `)
