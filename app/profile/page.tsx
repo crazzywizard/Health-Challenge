@@ -5,11 +5,21 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Profile } from '@/app/types';
 import AvatarPicker from '@/components/AvatarPicker';
+import { 
+  checkNotificationPermission, 
+  requestNotificationPermission, 
+  subscribeToPush, 
+  unsubscribeFromPush,
+  getPushSubscription
+} from '@/lib/notifications';
 
 export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isEditingAvatar, setIsEditingAvatar] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | 'unsupported'>('default');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoadingNotifications, setIsLoadingNotifications] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     const profileId = localStorage.getItem('current_profile_id');
@@ -31,8 +41,16 @@ export default function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProfile();
+    
+    // Check initial notification status
+    const checkNotifications = async () => {
+      const permission = await checkNotificationPermission();
+      setNotificationPermission(permission);
+      const subscription = await getPushSubscription();
+      setIsSubscribed(!!subscription);
+    };
+    checkNotifications();
   }, [fetchProfile]);
 
   const handleSwitchProfile = () => {
@@ -72,6 +90,33 @@ export default function ProfilePage() {
       router.refresh(); 
     } catch (error) {
       console.error('Logout failed:', error);
+    }
+  };
+
+  const handleToggleNotifications = async () => {
+    if (!profile) return;
+    setIsLoadingNotifications(true);
+    
+    try {
+      if (isSubscribed) {
+        await unsubscribeFromPush(profile.id);
+        setIsSubscribed(false);
+      } else {
+        const permission = await requestNotificationPermission();
+        setNotificationPermission(permission);
+        
+        if (permission === 'granted') {
+          await subscribeToPush(profile.id);
+          setIsSubscribed(true);
+        } else if (permission === 'denied') {
+          alert('Notifications are blocked. Please enable them in your browser settings.');
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling notifications:', error);
+      alert('Failed to update notification settings. Please check if push notifications are configured correctly.');
+    } finally {
+      setIsLoadingNotifications(false);
     }
   };
 
@@ -145,6 +190,47 @@ export default function ProfilePage() {
             Sign Out
           </button>
         </div>
+      </div>
+
+      <div className="card mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-bold">Push Notifications</h3>
+              <p className="text-xs text-text-secondary">Reminders and challenge updates</p>
+            </div>
+          </div>
+          <button
+            onClick={handleToggleNotifications}
+            disabled={isLoadingNotifications || notificationPermission === 'unsupported'}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+              isSubscribed ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-700'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                isSubscribed ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+        
+        {notificationPermission === 'denied' && (
+          <p className="mt-4 text-xs text-red-500 bg-red-500/5 p-2 rounded-lg border border-red-500/10">
+            Notifications are disabled in your browser. Please enable them to receive updates.
+          </p>
+        )}
+        
+        {notificationPermission === 'unsupported' && (
+          <p className="mt-4 text-xs text-text-tertiary">
+            Push notifications are not supported on this device or browser.
+          </p>
+        )}
       </div>
 
       {/* Stats Card Placeholder - To be connected to real data later */}

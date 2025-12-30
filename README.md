@@ -8,8 +8,7 @@ A modern Progressive Web App for tracking customizable health challenges with fr
 - **Flexible Rules**: Add any rules you want (fasting, steps, no sugar, etc.)
 - **Participant Management**: Add multiple people to each challenge
 - **Progress Tracking**: Daily check-ins with streak tracking
-- **PWA Support**: Install on your phone like a native app
-- **Offline Mode**: Works without internet (coming soon)
+- **Push Notifications**: Reminders and challenge updates directly to your device
 - **Beautiful UI**: Modern glassmorphism design with smooth animations
 - **Dark Mode**: Automatic dark/light mode support
 - **Profile Pictures**: Choice of fitness icons or custom file uploads
@@ -37,6 +36,16 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 
 # App Password
 APP_PASSWORD_HASH=your-hashed-password
+
+# Web Push (VAPID)
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=your-public-key
+VAPID_PRIVATE_KEY=your-private-key
+VAPID_SUBJECT=mailto:your@email.com
+```
+
+**Generate VAPID keys:**
+```bash
+npx web-push generate-vapid-keys
 ```
 
 **Generate password hash:**
@@ -138,7 +147,6 @@ health-challenge/
 ## 🚧 Coming Soon
 
 - [ ] Real-time updates (Supabase Realtime)
-- [ ] Push notifications
 - [ ] Leaderboards
 - [ ] Challenge templates
 - [ ] Export progress data
