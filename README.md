@@ -12,6 +12,7 @@ A modern Progressive Web App for tracking customizable health challenges with fr
 - **Offline Mode**: Works without internet (coming soon)
 - **Beautiful UI**: Modern glassmorphism design with smooth animations
 - **Dark Mode**: Automatic dark/light mode support
+- **Profile Pictures**: Choice of fitness icons or custom file uploads
 
 ## 🚀 Quick Start
 
@@ -141,7 +142,6 @@ health-challenge/
 - [ ] Leaderboards
 - [ ] Challenge templates
 - [ ] Export progress data
-- [ ] Profile pictures
 - [ ] Challenge sharing
 
 ## 📄 License
