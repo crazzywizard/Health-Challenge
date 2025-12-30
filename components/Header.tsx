@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 
 export default function Header() {
@@ -9,6 +10,8 @@ export default function Header() {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [profileName, setProfileName] = useState<string>('');
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [avatarColor, setAvatarColor] = useState<string>('');
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -30,6 +33,8 @@ export default function Header() {
           
           if (currentProfileId) {
             setProfileName(currentName || 'User');
+            setAvatarUrl(localStorage.getItem('current_profile_avatar') || '');
+            setAvatarColor(localStorage.getItem('current_profile_color') || 'gradient-primary');
             setIsVisible(true);
           } else {
             setIsVisible(false);
@@ -55,6 +60,8 @@ export default function Header() {
       await fetch('/api/auth/logout', { method: 'POST' });
       localStorage.removeItem('current_profile_id');
       localStorage.removeItem('current_profile_name');
+      localStorage.removeItem('current_profile_avatar');
+      localStorage.removeItem('current_profile_color');
       setIsAuthenticated(false);
       setIsVisible(false);
       router.push('/');
@@ -97,8 +104,12 @@ export default function Header() {
            </div>
            <div className="flex items-center gap-4">
              <Link href="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-               <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-xs text-white font-bold">
-                 {profileName.charAt(0).toUpperCase()}
+               <div className="w-8 h-8 rounded-full ${avatarColor || 'gradient-primary'} flex items-center justify-center text-xs text-white font-bold overflow-hidden relative">
+                 {avatarUrl ? (
+                    <Image src={avatarUrl} alt={profileName} fill className="object-cover" />
+                  ) : (
+                    profileName.charAt(0).toUpperCase()
+                  )}
                </div>
                <span className="text-sm font-medium">{profileName}</span>
              </Link>
@@ -116,8 +127,12 @@ export default function Header() {
       <header className="glass sticky top-0 z-[var(--z-sticky)] border-b border-border mobile-only pt-[var(--safe-area-top)]">
         <div className="px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold gradient-text">{getPageTitle()}</h1>
-           <Link href="/profile" className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-xs text-white font-bold">
-              {profileName.charAt(0).toUpperCase()}
+           <Link href="/profile" className="w-8 h-8 rounded-full ${avatarColor || 'gradient-primary'} flex items-center justify-center text-xs text-white font-bold overflow-hidden relative">
+              {avatarUrl ? (
+                    <Image src={avatarUrl} alt={profileName} fill className="object-cover" />
+                  ) : (
+                    profileName.charAt(0).toUpperCase()
+                  )}
            </Link>
         </div>
       </header>

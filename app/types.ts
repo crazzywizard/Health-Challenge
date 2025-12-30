@@ -7,6 +7,7 @@ export interface Profile {
   id: string;
   name: string;
   avatar_color: string;
+  avatar_url?: string;
   created_at: string;
 }
 
@@ -38,6 +39,11 @@ export interface Participant {
   name: string;
   email: string | null;
   profile_id?: string;
+  profile?: {
+    id: string;
+    avatar_url: string | null;
+    avatar_color: string;
+  };
   joined_at: string;
 }
 

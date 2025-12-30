@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const supabase = await createClient();
-    const { name, avatar_color } = await request.json();
+    const { name, avatar_color, avatar_url } = await request.json();
 
     if (!name) {
       return NextResponse.json(
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       .insert({
         name,
         avatar_color: color,
+        avatar_url: avatar_url || null,
       })
       .select()
       .single();
