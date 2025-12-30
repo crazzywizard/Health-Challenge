@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { CreateChallengeInput } from '@/app/types';
+import { CreateChallengeInput, ChallengeWithDetails, Participant } from '@/app/types';
 import { enrichParticipantWithProgress } from '@/lib/progress';
 
 // Middleware to check authentication
@@ -52,8 +52,8 @@ export async function GET(request: NextRequest) {
     }
 
     if (data) {
-      data.forEach((challenge: any) => {
-        challenge.participants = challenge.participants.map((p: any) => 
+      data.forEach((challenge: ChallengeWithDetails) => {
+        challenge.participants = challenge.participants.map((p: Participant) => 
           enrichParticipantWithProgress(p, challenge.rules, challenge.start_date, challenge.duration_days)
         );
       });

@@ -7,7 +7,7 @@ afterEach(cleanup);
 
 // Mock next/image
 mock.module('next/image', () => ({
-  default: ({ src, alt, fill, className }: any) => {
+  default: ({ src, alt, className }: { src: string; alt: string; fill?: boolean; className?: string }) => {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={alt} className={className} />;
   },
@@ -53,8 +53,8 @@ describe('AvatarPicker', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve({ url: '/uploads/new-avatar.png' }),
-      } as any)
-    ) as any) as any;
+      } as Response)
+    ) as unknown as typeof globalThis.fetch);
 
     const { container } = render(<AvatarPicker onSelect={onSelect} />);
     
@@ -78,8 +78,8 @@ describe('AvatarPicker', () => {
       Promise.resolve({
         ok: false,
         json: () => Promise.resolve({ error: 'Upload failed' }),
-      } as any)
-    ) as any) as any;
+      } as unknown as Response)
+    ) as unknown as typeof globalThis.fetch);
     
     const mockAlert = spyOn(globalThis, 'alert').mockImplementation(() => {});
 

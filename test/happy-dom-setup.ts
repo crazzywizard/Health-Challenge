@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { GlobalWindow } from 'happy-dom';
 
 const window = new GlobalWindow();

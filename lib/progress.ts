@@ -79,7 +79,7 @@ function areAllRulesComplete(dayProgress: DailyProgress[] | undefined, rules: Ru
  * Enriches participant data with calculated stats.
  */
 export function enrichParticipantWithProgress(
-  participant: any,
+  participant: Participant & { progress?: DailyProgress[] },
   rules: Rule[],
   challengeStartDate: string,
   durationDays: number

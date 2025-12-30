@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChallengeWithDetails, DailyProgress } from '@/app/types';
+import { ChallengeWithDetails } from '@/app/types';
 import AddParticipantModal from '@/components/AddParticipantModal';
 import DeleteChallengeModal from '@/components/DeleteChallengeModal';
 
@@ -39,7 +39,7 @@ export default function ChallengeDetailsPage() {
       } else {
         setError(data.error || 'Challenge not found');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch challenge details');
     } finally {
       setLoading(false);
@@ -83,6 +83,7 @@ export default function ChallengeDetailsPage() {
     if (id) {
       fetchChallenge();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleToggleProgress = async (participantId: string, ruleId: string, currentCompleted: boolean) => {
@@ -155,11 +156,11 @@ export default function ChallengeDetailsPage() {
     );
   }
 
-  const startDate = new Date(challenge.start_date);
-  const endDate = new Date(challenge.end_date);
-  const today = new Date();
-  const isStarted = today >= startDate;
-  const isEnded = today > endDate;
+  // const startDate = new Date(challenge.start_date);
+  // const endDate = new Date(challenge.end_date);
+  // const today = new Date();
+  // const isStarted = today >= startDate;
+  // const isEnded = today > endDate;
 
   return (
     <div className="min-h-screen bg-background">

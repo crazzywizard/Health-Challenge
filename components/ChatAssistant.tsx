@@ -23,7 +23,7 @@ export default function ChatAssistant() {
         } else {
           setIsReady(false);
         }
-      } catch (error) {
+      } catch {
         setIsReady(false);
       }
     };
@@ -45,7 +45,7 @@ export default function ChatAssistant() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e as any);
+      handleSubmit(e as unknown as React.FormEvent);
     }
   };
 
@@ -58,8 +58,8 @@ export default function ChatAssistant() {
     sendMessage({ text: content });
 
     // Reset height of textarea if we can find it
-    const textarea = (e.target as any).querySelector?.('textarea');
-    if (textarea) textarea.style.height = 'auto';
+    const textarea = (e.currentTarget as HTMLElement).querySelector?.('textarea');
+    if (textarea) (textarea as HTMLTextAreaElement).style.height = 'auto';
   };
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -155,7 +155,7 @@ export default function ChatAssistant() {
                   </span>
                 </div>
                 <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                  {m.parts.map((part: any, i: number) => {
+                  {m.parts.map((part, i: number) => {
                     if (part.type === 'text') {
                       return <span key={i}>{part.text}</span>;
                     }
