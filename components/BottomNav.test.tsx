@@ -1,7 +1,9 @@
-import { describe, it, expect, mock } from 'bun:test';
-import { render, screen } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import BottomNav from './BottomNav';
 import React from 'react';
+import { describe, it, expect, mock, afterEach } from 'bun:test';
+
+afterEach(cleanup);
 
 // Mock next/navigation
 mock.module('next/navigation', () => ({
