@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { enrichParticipantWithProgress } from '@/lib/progress';
 
 // Middleware to check authentication
 function checkAuth(request: NextRequest): boolean {
@@ -48,6 +49,11 @@ export async function GET(
             : error.message 
         }, 
         { status: 500 }
+      );
+    }
+    if (data) {
+      data.participants = data.participants.map((p: any) => 
+        enrichParticipantWithProgress(p, data.rules, data.start_date, data.duration_days)
       );
     }
 

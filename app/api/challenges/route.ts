@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { CreateChallengeInput } from '@/app/types';
+import { enrichParticipantWithProgress } from '@/lib/progress';
 
 // Middleware to check authentication
 function checkAuth(request: NextRequest): boolean {
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('challenges')
-      .select('*, rules(*), participants(*)', { count: 'exact' })
+      .select('*, rules(*), participants(*, progress:daily_progress(*))', { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(offset, offset + pageSize - 1);
 
@@ -48,6 +49,14 @@ export async function GET(request: NextRequest) {
         }, 
         { status: 500 }
       );
+    }
+
+    if (data) {
+      data.forEach((challenge: any) => {
+        challenge.participants = challenge.participants.map((p: any) => 
+          enrichParticipantWithProgress(p, challenge.rules, challenge.start_date, challenge.duration_days)
+        );
+      });
     }
 
     return NextResponse.json({

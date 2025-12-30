@@ -22,7 +22,7 @@ export default function ChallengeDetailsPage() {
     const currentProfileId = localStorage.getItem('current_profile_id');
     setProfileId(currentProfileId);
   }, []);
-  const [selectedDate] = useState(() => {
+  const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     return today.toLocaleDateString('en-CA'); // YYYY-MM-DD format
   });
@@ -272,8 +272,10 @@ export default function ChallengeDetailsPage() {
                   id="date-picker"
                   type="date"
                   value={selectedDate}
-                  disabled
-                  className="bg-surface-elevated border-border rounded-lg text-sm opacity-70 cursor-not-allowed flex-1 sm:flex-none"
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  min={challenge.start_date.split('T')[0]}
+                  max={new Date().toLocaleDateString('en-CA')}
+                  className="bg-surface-elevated border-border rounded-lg text-sm flex-1 sm:flex-none"
                 />
               </div>
             </div>
