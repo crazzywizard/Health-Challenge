@@ -110,3 +110,15 @@ CREATE POLICY "Allow all operations on rules" ON rules FOR ALL USING (true);
 CREATE POLICY "Allow all operations on participants" ON participants FOR ALL USING (true);
 CREATE POLICY "Allow all operations on daily_progress" ON daily_progress FOR ALL USING (true);
 CREATE POLICY "Allow all operations on profiles" ON profiles FOR ALL USING (true);
+
+-- Push Subscriptions table
+CREATE TABLE push_subscriptions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  profile_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  subscription JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(profile_id, subscription)
+);
+
+ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all operations on push_subscriptions" ON push_subscriptions FOR ALL USING (true);
