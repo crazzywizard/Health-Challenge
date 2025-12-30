@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const filePath = `avatars/${fileName}`;
 
     // Note: User must create 'profiles' bucket in Supabase and set public access
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('profiles')
       .upload(filePath, file, {
           cacheControl: '3600',

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
+import { describe, it, expect, afterEach } from 'bun:test';
 import { setSystemTime } from 'bun:test';
 import { calculateStreak, calculateCompletionPercentage } from './progress';
 import { DailyProgress, Rule } from '@/app/types';
@@ -29,7 +29,6 @@ describe('progress tracking logic', () => {
     });
 
     it('calculates streak correctly for consecutive completed days (including today)', () => {
-      const todayStr = '2023-01-03';
       const date = new Date('2023-01-03T12:00:00Z'); // Today is Jan 3rd
       setSystemTime(date);
 

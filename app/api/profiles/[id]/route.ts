@@ -29,7 +29,7 @@ export async function GET(
     }
 
     return NextResponse.json({ data });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -47,7 +47,7 @@ export async function PATCH(
     const supabase = await createClient();
     const body = await request.json();
 
-    const updates: any = {};
+    const updates: { name?: string; avatar_color?: string; avatar_url?: string } = {};
     if (body.name) updates.name = body.name;
     if (body.avatar_color) updates.avatar_color = body.avatar_color;
     if (body.avatar_url !== undefined) updates.avatar_url = body.avatar_url;

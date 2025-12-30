@@ -49,7 +49,7 @@ export default function DeleteChallengeModal({ isOpen, onClose, onConfirm, chall
 
         <div className="space-y-4">
           <p className="text-text-secondary font-medium">
-            Are you sure you want to delete <span className="text-text font-bold">"{challengeName}"</span>?
+            Are you sure you want to delete <span className="text-text font-bold">&quot;{challengeName}&quot;</span>?
           </p>
           <p className="text-sm text-text-tertiary">
             This action cannot be undone. All participants, rules, and daily progress for this challenge will be permanently deleted.

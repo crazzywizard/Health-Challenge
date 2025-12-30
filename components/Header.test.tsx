@@ -21,10 +21,10 @@ mock.module('next/link', () => {
     };
 });
 
-// Mock next/image
 mock.module('next/image', () => {
     return {
-        default: (props: any) => <img {...props} />
+        // eslint-disable-next-line @next/next/no-img-element
+        default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />
     };
 });
 
@@ -35,14 +35,14 @@ describe('Header', () => {
     global.fetch = mock(() => Promise.resolve({
       ok: true,
       json: () => Promise.resolve({ authenticated: true }),
-    })) as any;
+    })) as unknown as typeof globalThis.fetch;
   });
 
   it('is not visible when not authenticated', async () => {
       global.fetch = mock(() => Promise.resolve({
         ok: false,
         json: () => Promise.resolve({ authenticated: false }),
-      })) as any;
+      })) as unknown as typeof globalThis.fetch;
 
       const { container } = render(<Header />);
       
@@ -70,10 +70,10 @@ describe('Header', () => {
       
       const logoutMock = mock(() => Promise.resolve({ ok: true }));
       global.fetch = mock((url: string) => {
-          if (url === '/api/auth/verify') return Promise.resolve({ ok: true, json: () => Promise.resolve({ authenticated: true }) });
-          if (url === '/api/auth/logout') return logoutMock();
+          if (url === '/api/auth/verify') return Promise.resolve({ ok: true, json: () => Promise.resolve({ authenticated: true }) } as unknown as Response);
+          if (url === '/api/auth/logout') return logoutMock() as unknown as Promise<Response>;
           return Promise.reject('Unknown URL');
-      }) as any;
+      }) as unknown as typeof globalThis.fetch;
 
       render(<Header />);
       

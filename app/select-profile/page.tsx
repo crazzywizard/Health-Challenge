@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Profile } from '@/app/types';
@@ -15,11 +15,7 @@ export default function SelectProfilePage() {
   const [selectedAvatarUrl, setSelectedAvatarUrl] = useState<string | undefined>();
   const [authChecked, setAuthChecked] = useState(false);
 
-  useEffect(() => {
-    checkAuthAndFetchProfiles();
-  }, []);
-
-  const checkAuthAndFetchProfiles = async () => {
+  const checkAuthAndFetchProfiles = useCallback(async () => {
     try {
       // 1. Check Auth
       const authRes = await fetch('/api/auth/verify');
@@ -43,7 +39,11 @@ export default function SelectProfilePage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkAuthAndFetchProfiles();
+  }, [checkAuthAndFetchProfiles]);
 
   const handleSelectProfile = (profile: Profile) => {
     // Store selected profile ID

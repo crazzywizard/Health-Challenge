@@ -66,18 +66,18 @@ export default function Home() {
     router.push('/select-profile');
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      localStorage.removeItem('current_profile_id');
-      localStorage.removeItem('current_profile_name');
-      setIsAuthenticated(false);
-      router.push('/');
-      router.refresh();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
+  // const handleLogout = async () => {
+  //   try {
+  //     await fetch('/api/auth/logout', { method: 'POST' });
+  //     localStorage.removeItem('current_profile_id');
+  //     localStorage.removeItem('current_profile_name');
+  //     setIsAuthenticated(false);
+  //     router.push('/');
+  //     router.refresh();
+  //   } catch (error) {
+  //     console.error('Logout failed:', error);
+  //   }
+  // };
 
   if (isAuthChecking) {
     return (

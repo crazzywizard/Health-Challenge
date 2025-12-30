@@ -30,7 +30,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
       } else {
         setError(data.error || 'Invalid password');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to connect. Please try again.');
     } finally {
       setLoading(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Profile } from '@/app/types';
@@ -11,7 +11,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isEditingAvatar, setIsEditingAvatar] = useState(false);
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     const profileId = localStorage.getItem('current_profile_id');
     if (profileId) {
       try {
@@ -28,11 +28,12 @@ export default function ProfilePage() {
         console.error('Failed to fetch profile:', error);
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);
 
   const handleSwitchProfile = () => {
     localStorage.removeItem('current_profile_id');

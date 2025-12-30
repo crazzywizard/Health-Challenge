@@ -1,14 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import ChallengeList from '@/components/ChallengeList';
 import CreateChallengeModal from '@/components/CreateChallengeModal';
 import DeleteChallengeModal from '@/components/DeleteChallengeModal';
 import { ChallengeWithDetails } from '@/app/types';
 
 export default function ChallengesPage() {
-  const router = useRouter();
   const [challenges, setChallenges] = useState<ChallengeWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
