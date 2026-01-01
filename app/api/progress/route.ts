@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { UpdateProgressInput } from '@/app/types';
+import { verifyParticipantOwnership, verifyProgressOwnership } from '@/lib/security';
 
 // Middleware to check authentication
 function checkAuth(request: NextRequest): boolean {
@@ -69,6 +70,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Security Check: Ensure participant belongs to the current profile
+    const currentProfileId = request.cookies.get('current_profile_id')?.value;
+    if (currentProfileId) {
+      const isOwner = await verifyParticipantOwnership(supabase, input.participant_id, currentProfileId);
+      if (!isOwner) {
+        return NextResponse.json(
+          { error: 'Forbidden: You can only update your own progress' },
+          { status: 403 }
+        );
+      }
+    }
+
     // Upsert progress (insert or update if exists)
     const { data, error } = await supabase
       .from('daily_progress')
@@ -118,6 +131,20 @@ export async function PUT(request: NextRequest) {
         { error: 'Progress ID is required' },
         { status: 400 }
       );
+    }
+
+    // Security Check: Ensure progress record belongs to a participant of the current profile
+    const currentProfileId = request.cookies.get('current_profile_id')?.value;
+    if (currentProfileId) {
+      const isOwner = await verifyProgressOwnership(supabase, id, currentProfileId);
+      if (!isOwner) {
+        // Distinguish between not found and forbidden if needed, but for security, generic 403 or 404 is fine.
+        // We'll stick to 403 if it exists but not owned, but verifyProgressOwnership returns false for both.
+        return NextResponse.json(
+          { error: 'Forbidden or not found' },
+          { status: 403 }
+        );
+      }
     }
 
     const { data, error } = await supabase

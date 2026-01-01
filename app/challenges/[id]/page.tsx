@@ -333,17 +333,21 @@ export default function ChallengeDetailsPage() {
                         const progress = getProgressForDay(participant.id, rule.id);
                         const isCompleted = progress?.completed || false;
                         const isUpdating = updatingProgress === `${participant.id}-${rule.id}`;
+                        const isOwnProfile = participant.profile_id === profileId;
+                        const canToggle = isOwnProfile && !isUpdating;
 
                         return (
                           <button
                             key={rule.id}
-                            disabled={isUpdating}
+                            disabled={!canToggle}
                             onClick={() => handleToggleProgress(participant.id, rule.id, isCompleted)}
                             className={`flex items-center justify-between p-4 rounded-xl border transition-all touch-manipulation min-h-[4.5rem] ${
                               isCompleted
                                 ? 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400 shadow-sm'
                                 : 'bg-surface border-border hover:border-primary/30 text-text-secondary active:scale-[0.98]'
-                            } ${isUpdating ? 'opacity-50 cursor-wait' : ''}`}
+                            } ${isUpdating ? 'opacity-50 cursor-wait' : ''} ${
+                              !isOwnProfile ? 'opacity-70 cursor-not-allowed filter grayscale-[0.2]' : ''
+                            }`}
                           >
                             <span className="text-sm font-semibold text-left line-clamp-2 pr-4 leading-tight">
                               {rule.description}
@@ -352,7 +356,7 @@ export default function ChallengeDetailsPage() {
                               isCompleted
                                 ? 'bg-green-500 border-green-500 text-white'
                                 : 'border-border'
-                            }`}>
+                            } ${!isOwnProfile ? 'opacity-50' : ''}`}>
                               {isCompleted && (
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />

@@ -45,13 +45,24 @@ export default function SelectProfilePage() {
     checkAuthAndFetchProfiles();
   }, [checkAuthAndFetchProfiles]);
 
-  const handleSelectProfile = (profile: Profile) => {
+  const handleSelectProfile = async (profile: Profile) => {
     // Store selected profile ID
     localStorage.setItem('current_profile_id', profile.id);
     localStorage.setItem('current_profile_name', profile.name);
     localStorage.setItem('current_profile_avatar', profile.avatar_url || '');
     localStorage.setItem('current_profile_color', profile.avatar_color);
     
+    // Sync to cookie for server-side validation
+    try {
+      await fetch('/api/profiles/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileId: profile.id }),
+      });
+    } catch (error) {
+      console.error('Failed to sync profile to cookie:', error);
+    }
+
     // Redirect to Dashboard
     router.push('/');
     router.refresh();
