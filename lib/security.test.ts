@@ -1,5 +1,6 @@
-import { describe, it, expect, mock } from 'bun:test';
+import { describe, it, expect } from 'bun:test';
 import { verifyParticipantOwnership, verifyProgressOwnership } from './security';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 describe('security utilities', () => {
   describe('verifyParticipantOwnership', () => {
@@ -12,7 +13,7 @@ describe('security utilities', () => {
             })
           })
         })
-      } as any;
+      } as unknown as SupabaseClient;
 
       const result = await verifyParticipantOwnership(mockSupabase, 'part-1', 'profile-1');
       expect(result).toBe(true);
@@ -27,7 +28,7 @@ describe('security utilities', () => {
             })
           })
         })
-      } as any;
+      } as unknown as SupabaseClient;
 
       const result = await verifyParticipantOwnership(mockSupabase, 'part-1', 'profile-1');
       expect(result).toBe(false);
@@ -42,7 +43,7 @@ describe('security utilities', () => {
             })
           })
         })
-      } as any;
+      } as unknown as SupabaseClient;
 
       const result = await verifyParticipantOwnership(mockSupabase, 'part-1', 'profile-1');
       expect(result).toBe(false);
@@ -73,7 +74,7 @@ describe('security utilities', () => {
           }
           return {};
         }
-      } as any;
+      } as unknown as SupabaseClient;
 
       const result = await verifyProgressOwnership(mockSupabase, 'prog-1', 'profile-1');
       expect(result).toBe(true);
@@ -102,7 +103,7 @@ describe('security utilities', () => {
           }
           return {};
         }
-      } as any;
+      } as unknown as SupabaseClient;
 
       const result = await verifyProgressOwnership(mockSupabase, 'prog-1', 'profile-1');
       expect(result).toBe(false);
