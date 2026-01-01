@@ -69,6 +69,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Security Check: Ensure participant belongs to the current profile
+    const currentProfileId = request.cookies.get('current_profile_id')?.value;
+    if (currentProfileId) {
+      const { data: participant, error: pError } = await supabase
+        .from('participants')
+        .select('profile_id')
+        .eq('id', input.participant_id)
+        .single();
+      
+      if (pError || !participant || participant.profile_id !== currentProfileId) {
+        return NextResponse.json(
+          { error: 'Forbidden: You can only update your own progress' },
+          { status: 403 }
+        );
+      }
+    }
+
     // Upsert progress (insert or update if exists)
     const { data, error } = await supabase
       .from('daily_progress')
@@ -118,6 +135,33 @@ export async function PUT(request: NextRequest) {
         { error: 'Progress ID is required' },
         { status: 400 }
       );
+    }
+
+    // Security Check: Ensure progress record belongs to a participant of the current profile
+    const currentProfileId = request.cookies.get('current_profile_id')?.value;
+    if (currentProfileId) {
+      const { data: progress, error: prError } = await supabase
+        .from('daily_progress')
+        .select('participant_id')
+        .eq('id', id)
+        .single();
+
+      if (prError || !progress) {
+        return NextResponse.json({ error: 'Progress record not found' }, { status: 404 });
+      }
+
+      const { data: participant, error: pError } = await supabase
+        .from('participants')
+        .select('profile_id')
+        .eq('id', progress.participant_id)
+        .single();
+
+      if (pError || !participant || participant.profile_id !== currentProfileId) {
+        return NextResponse.json(
+          { error: 'Forbidden: You can only update your own progress' },
+          { status: 403 }
+        );
+      }
     }
 
     const { data, error } = await supabase

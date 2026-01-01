@@ -5,6 +5,7 @@ export async function POST() {
   
   // Clear session cookie
   response.cookies.delete('app_session');
+  response.cookies.delete('current_profile_id');
   
   return response;
 }
