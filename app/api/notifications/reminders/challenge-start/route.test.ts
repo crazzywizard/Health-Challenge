@@ -11,7 +11,8 @@ mock.module('@/lib/push-notifications', () => ({
 
 // Mock supabase
 const mockSupabase = {
-  from: mock(() => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  from: mock((_: string) => ({
     select: mock(() => ({
       eq: mock(() => ({
         not: mock(() => Promise.resolve({
@@ -37,27 +38,28 @@ const mockSupabase = {
 mockSupabase.from.mockImplementation((table: string) => {
     if (table === 'challenges') {
         return {
-            select: () => ({
-                eq: () => Promise.resolve({
+            select: mock(() => ({
+                eq: mock(() => Promise.resolve({
                     data: [{ id: 'c1', name: 'Challenge 1' }],
                     error: null
-                })
-            })
+                }))
+            }))
         };
     }
     if (table === 'participants') {
         return {
-            select: () => ({
-                eq: () => ({
-                    not: () => Promise.resolve({
+            select: mock(() => ({
+                eq: mock(() => ({
+                    not: mock(() => Promise.resolve({
                         data: [{ profile_id: 'p1' }],
                         error: null
-                    })
-                })
-            })
+                    }))
+                }))
+            }))
         };
     }
-    return {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return {} as any;
 });
 
 mock.module('@/lib/supabase/server', () => ({
@@ -96,12 +98,13 @@ describe('Challenge Start Reminder API Route', () => {
     mockSupabase.from.mockImplementation((table: string) => {
         if (table === 'challenges') {
             return {
-                select: () => ({
-                    eq: () => Promise.resolve({ data: [], error: null })
-                })
+                select: mock(() => ({
+                    eq: mock(() => Promise.resolve({ data: [], error: null }))
+                }))
             };
         }
-        return {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return {} as any;
     });
 
     const req = new NextRequest('http://localhost/api/notifications/reminders/challenge-start', {
