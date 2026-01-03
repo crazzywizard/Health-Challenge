@@ -11,7 +11,7 @@ export default function Home() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
-  const [activeChallenge, setActiveChallenge] = useState<ChallengeWithDetails | null>(null);
+  const [challenges, setChallenges] = useState<ChallengeWithDetails[]>([]);
   const [profileName, setProfileName] = useState<string>('');
   const [currentProfileId, setCurrentProfileId] = useState<string | null>(null);
 
@@ -47,13 +47,12 @@ export default function Home() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      // Fetch only active challenge for dashboard summary
+      // Fetch challenges
       fetch('/api/challenges')
         .then(res => res.json())
         .then(data => {
           if (data.data) {
-             const active = data.data.find((c: ChallengeWithDetails) => c.status === 'active');
-             setActiveChallenge(active || null);
+            setChallenges(data.data);
           }
         })
         .catch(err => console.error('Failed to fetch challenges', err));
@@ -65,19 +64,6 @@ export default function Home() {
     // After login, always go to select profile
     router.push('/select-profile');
   };
-
-  // const handleLogout = async () => {
-  //   try {
-  //     await fetch('/api/auth/logout', { method: 'POST' });
-  //     localStorage.removeItem('current_profile_id');
-  //     localStorage.removeItem('current_profile_name');
-  //     setIsAuthenticated(false);
-  //     router.push('/');
-  //     router.refresh();
-  //   } catch (error) {
-  //     console.error('Logout failed:', error);
-  //   }
-  // };
 
   if (isAuthChecking) {
     return (
@@ -98,6 +84,17 @@ export default function Home() {
   if (!isAuthenticated) {
     return <LoginPage onLoginSuccess={handleLoginSuccess} />;
   }
+
+  const myChallenges = challenges.filter(c => 
+    c.participants?.some(p => p.profile_id === currentProfileId)
+  );
+
+  const availableChallenges = challenges.filter(c => 
+    !c.participants?.some(p => p.profile_id === currentProfileId) && 
+    (c.status === 'active' || c.status === 'upcoming')
+  );
+
+  const activeChallenge = myChallenges.find(c => c.status === 'active');
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -145,39 +142,75 @@ export default function Home() {
              </div>
           </div>
 
-          {/* Active Challenge Preview */}
+          {/* My Challenges Section */}
           <div className="mb-8">
-            <h3 className="text-xl font-bold mb-4">Active Challenge</h3>
-             {activeChallenge ? (
-               <div className="card hover:shadow-xl transition-all p-4 sm:p-6 cursor-pointer" onClick={() => window.location.href = `/challenges/${activeChallenge.id}`}>
-                 <div className="flex items-center justify-between mb-2">
-                   <h4 className="text-lg font-bold">{activeChallenge.name}</h4>
-                   <span className="text-primary text-sm">View &rarr;</span>
-                 </div>
-                 <p className="text-text-secondary text-sm mb-4 line-clamp-2">{activeChallenge.description}</p>
-                 {(() => {
-                   const participant = activeChallenge.participants?.find(p => p.profile_id === currentProfileId);
-                   const percentage = participant?.completion_percentage || 0;
-                   return (
-                     <>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                         <div className="bg-primary h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold">My Challenges</h3>
+              <Link href="/challenges" className="text-primary text-sm hover:underline">View All</Link>
+            </div>
+             {myChallenges.length > 0 ? (
+               <div className="grid gap-4 sm:grid-cols-2">
+                 {myChallenges.map(challenge => (
+                    <div key={challenge.id} className="card hover:shadow-xl transition-all p-4 sm:p-6 cursor-pointer" onClick={() => window.location.href = `/challenges/${challenge.id}`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-lg font-bold truncate">{challenge.name}</h4>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                          challenge.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'
+                        }`}>
+                          {challenge.status}
+                        </span>
                       </div>
-                      <p className="text-xs text-text-secondary mt-1 text-right">{percentage}% Complete</p>
-                     </>
-                   );
-                 })()}
+                      <p className="text-text-secondary text-sm mb-4 line-clamp-1">{challenge.description}</p>
+                      {(() => {
+                        const participant = challenge.participants?.find(p => p.profile_id === currentProfileId);
+                        const percentage = participant?.completion_percentage || 0;
+                        return (
+                          <>
+                           <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                              <div className="bg-primary h-2 rounded-full transition-all duration-500" style={{ width: `${percentage}%` }}></div>
+                           </div>
+                           <div className="flex justify-between items-center mt-1">
+                             <p className="text-[10px] text-text-secondary">{participant?.current_streak || 0} day streak</p>
+                             <p className="text-[10px] text-text-secondary font-bold">{percentage}% Complete</p>
+                           </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                 ))}
                </div>
              ) : (
                 <div className="card text-center py-8">
-                  <p className="text-text-secondary mb-4">No active challenges. Start one today!</p>
-                  <Link href="/challenges" className="btn btn-primary">Go to Challenges</Link>
+                  <p className="text-text-secondary mb-4">You haven&apos;t joined any challenges yet.</p>
+                  <Link href="/challenges" className="btn btn-primary">Discover Challenges</Link>
                 </div>
              )}
           </div>
 
+          {/* Available to Join Section */}
+          {availableChallenges.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold mb-4">Available to Join</h3>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {availableChallenges.map(challenge => (
+                  <div key={challenge.id} className="card hover:shadow-xl transition-all p-4 flex flex-col">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-bold truncate">{challenge.name}</h4>
+                      <span className="text-[10px] text-text-secondary">{challenge.duration_days} days</span>
+                    </div>
+                    <p className="text-text-secondary text-xs mb-4 line-clamp-2 flex-grow">{challenge.description}</p>
+                    <Link href={`/challenges/${challenge.id}`} className="btn btn-secondary text-xs py-2 w-full text-center">
+                      View Details
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
     </div>
+
   );
 }
