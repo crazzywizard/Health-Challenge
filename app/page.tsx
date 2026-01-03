@@ -181,7 +181,7 @@ export default function Home() {
                </div>
              ) : (
                 <div className="card text-center py-8">
-                  <p className="text-text-secondary mb-4">You haven't joined any challenges yet.</p>
+                  <p className="text-text-secondary mb-4">You haven&apos;t joined any challenges yet.</p>
                   <Link href="/challenges" className="btn btn-primary">Discover Challenges</Link>
                 </div>
              )}
