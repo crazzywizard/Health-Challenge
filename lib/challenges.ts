@@ -1,4 +1,5 @@
 import { ChallengeStatus, Challenge } from '@/app/types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Calculates the current status of a challenge based on today's date.
@@ -29,7 +30,7 @@ export function calculateChallengeStatus(startDate: string, endDate: string): Ch
  * Checks if a challenge's status in the DB is correct and updates it if not.
  * This is used for "just-in-time" updates when challenges are retrieved.
  */
-export async function syncChallengeStatus(supabase: any, challenge: Challenge): Promise<Challenge> {
+export async function syncChallengeStatus(supabase: SupabaseClient, challenge: Challenge): Promise<Challenge> {
   const currentStatus = calculateChallengeStatus(challenge.start_date, challenge.end_date);
   
   if (challenge.status !== currentStatus) {

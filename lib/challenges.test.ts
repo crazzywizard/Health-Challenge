@@ -5,13 +5,11 @@ describe('calculateChallengeStatus', () => {
   const originalDate = Date;
 
   afterEach(() => {
-    // @ts-ignore
     global.Date = originalDate;
   });
 
   const mockDate = (dateStr: string) => {
     const mockedDate = new Date(dateStr);
-    // @ts-ignore
     spyOn(global, 'Date').mockImplementation(() => mockedDate);
   };
 
