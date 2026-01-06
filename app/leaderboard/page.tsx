@@ -142,7 +142,7 @@ export default function OverallLeaderboardPage() {
                       {/* Right: Score */}
                       <div className="sm:text-right flex sm:flex-col justify-between items-center sm:items-end gap-2 border-t sm:border-t-0 border-border pt-4 sm:pt-0">
                          <div>
-                            <div className="text-[10px] text-text-tertiary uppercase font-black tracking-widest">Total Completions</div>
+                            <div className="text-[10px] text-text-tertiary uppercase font-black tracking-widest">Rules Completed</div>
                             <div className="text-2xl sm:text-3xl font-black text-primary">{stat.total_completions}</div>
                          </div>
                          <div className="hidden sm:block w-32 bg-border/30 rounded-full h-2 overflow-hidden">
