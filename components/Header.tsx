@@ -76,6 +76,7 @@ export default function Header() {
   const getPageTitle = () => {
     if (pathname === '/') return 'Dashboard';
     if (pathname.startsWith('/challenges')) return 'Challenges';
+    if (pathname === '/leaderboard') return 'Rankings';
     if (pathname === '/history') return 'History';
     if (pathname === '/profile') return 'Profile';
     return 'Dashboard';
@@ -96,6 +97,9 @@ export default function Header() {
                </Link>
                <Link href="/challenges" className={`nav-link ${pathname.startsWith('/challenges') ? 'active' : ''}`}>
                  <span>Challenges</span>
+               </Link>
+               <Link href="/leaderboard" className={`nav-link ${pathname === '/leaderboard' ? 'active' : ''}`}>
+                 <span>Rankings</span>
                </Link>
                <Link href="/history" className={`nav-link ${pathname === '/history' ? 'active' : ''}`}>
                  <span>History</span>
