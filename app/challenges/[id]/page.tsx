@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { ChallengeWithDetails } from '@/app/types';
 import AddParticipantModal from '@/components/AddParticipantModal';
 import DeleteChallengeModal from '@/components/DeleteChallengeModal';
+import Leaderboard from '@/components/Leaderboard';
 
 export default function ChallengeDetailsPage() {
   const { id } = useParams();
@@ -17,6 +18,7 @@ export default function ChallengeDetailsPage() {
   const [showAddParticipant, setShowAddParticipant] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [isJoining, setIsJoining] = useState(false);
+  const [activeTab, setActiveTab] = useState<'progress' | 'leaderboard'>('progress');
   
   useEffect(() => {
     // Get current profile
@@ -264,23 +266,64 @@ export default function ChallengeDetailsPage() {
             </div>
           </div>
 
-          {/* Progress Tracker */}
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h3 className="text-xl sm:text-2xl font-bold">Daily Progress</h3>
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <label htmlFor="date-picker" className="text-xs sm:text-sm font-medium whitespace-nowrap">Tracking for:</label>
-                <input
-                  id="date-picker"
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  min={challenge.start_date.split('T')[0]}
-                  max={new Date().toLocaleDateString('en-CA')}
-                  className="bg-surface-elevated border-border rounded-lg text-sm flex-1 sm:flex-none"
-                />
+          {/* Tabs */}
+          <div className="flex gap-2 p-1 bg-surface-elevated rounded-2xl w-full sm:w-fit mb-8 border border-border">
+            <button
+              onClick={() => setActiveTab('progress')}
+              className={`flex-1 sm:px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
+                activeTab === 'progress' 
+                  ? 'bg-surface shadow-lg text-primary scale-[1.02]' 
+                  : 'text-text-secondary hover:text-text'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Daily Progress
+            </button>
+            <button
+              onClick={() => setActiveTab('leaderboard')}
+              className={`flex-1 sm:px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
+                activeTab === 'leaderboard' 
+                  ? 'bg-surface shadow-lg text-primary scale-[1.02]' 
+                  : 'text-text-secondary hover:text-text'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              Leaderboard
+            </button>
+          </div>
+
+          {activeTab === 'leaderboard' ? (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl sm:text-2xl font-bold">Rankings</h3>
+                <div className="text-xs text-text-tertiary">Current Standings</div>
               </div>
+              <Leaderboard 
+                participants={challenge.participants} 
+                currentProfileId={profileId} 
+              />
             </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <h3 className="text-xl sm:text-2xl font-bold">Daily Progress</h3>
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <label htmlFor="date-picker" className="text-xs sm:text-sm font-medium whitespace-nowrap">Tracking for:</label>
+                  <input
+                    id="date-picker"
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    min={challenge.start_date.split('T')[0]}
+                    max={new Date().toLocaleDateString('en-CA')}
+                    className="bg-surface-elevated border-border rounded-lg text-sm flex-1 sm:flex-none"
+                  />
+                </div>
+              </div>
 
             {challenge.participants.length === 0 ? (
               <div className="card text-center py-12">
@@ -372,6 +415,7 @@ export default function ChallengeDetailsPage() {
               </div>
             )}
           </div>
+        )}
         </div>
       </main>
 

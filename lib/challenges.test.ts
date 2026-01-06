@@ -10,7 +10,9 @@ describe('calculateChallengeStatus', () => {
 
   const mockDate = (dateStr: string) => {
     const mockedDate = new Date(dateStr);
-    spyOn(global, 'Date').mockImplementation(() => mockedDate);
+    // @ts-expect-error - Mocking global Date constructor which can return string or Date
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    spyOn(global, 'Date').mockImplementation(() => mockedDate as any);
   };
 
   it('should return upcoming if today is before start date', () => {
