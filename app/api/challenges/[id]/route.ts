@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { enrichParticipantWithProgress } from '@/lib/progress';
-import { Participant } from '@/app/types';
+import { Participant, Challenge } from '@/app/types';
+import { syncChallengeStatus } from '@/lib/challenges';
 
 // Middleware to check authentication
 function checkAuth(request: NextRequest): boolean {
@@ -54,6 +55,9 @@ export async function GET(
       );
     }
     if (data) {
+      const synced = await syncChallengeStatus(supabase, data as unknown as Challenge);
+      data.status = synced.status;
+      
       data.participants = data.participants.map((p: Participant) => 
         enrichParticipantWithProgress(p, data.rules, data.start_date, data.duration_days)
       );
