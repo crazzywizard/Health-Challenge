@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { CreateChallengeInput, ChallengeWithDetails, Participant } from '@/app/types';
+import { CreateChallengeInput, ChallengeWithDetails, Participant, Challenge } from '@/app/types';
 import { enrichParticipantWithProgress } from '@/lib/progress';
+import { calculateChallengeStatus, syncChallengeStatus } from '@/lib/challenges';
 
 // Middleware to check authentication
 function checkAuth(request: NextRequest): boolean {
@@ -52,19 +53,24 @@ export async function GET(request: NextRequest) {
     }
 
     if (data) {
-      data.forEach((challenge: ChallengeWithDetails) => {
-        challenge.participants = challenge.participants.map((p: Participant) => 
-          enrichParticipantWithProgress(p, challenge.rules, challenge.start_date, challenge.duration_days)
+      // Sync statuses and enrich participants
+      const syncedData = await Promise.all(data.map(async (challenge: ChallengeWithDetails) => {
+        const synced = await syncChallengeStatus(supabase, challenge as unknown as Challenge);
+        const updatedChallenge = { ...challenge, status: synced.status };
+        
+        updatedChallenge.participants = updatedChallenge.participants.map((p: Participant) => 
+          enrichParticipantWithProgress(p, updatedChallenge.rules, updatedChallenge.start_date, updatedChallenge.duration_days)
         );
+        return updatedChallenge;
+      }));
+      
+      return NextResponse.json({
+        data: syncedData,
+        total: count || 0,
+        page,
+        pageSize,
       });
     }
-
-    return NextResponse.json({
-      data,
-      total: count || 0,
-      page,
-      pageSize,
-    });
   } catch (error) {
     console.error('Error in GET /api/challenges:', error);
     const message = error instanceof Error ? error.message : 'Internal server error';
@@ -98,15 +104,7 @@ export async function POST(request: NextRequest) {
     endDate.setDate(endDate.getDate() + input.duration_days);
 
     // Determine status
-    const now = new Date();
-    let status: 'upcoming' | 'active' | 'completed';
-    if (startDate > now) {
-      status = 'upcoming';
-    } else if (endDate < now) {
-      status = 'completed';
-    } else {
-      status = 'active';
-    }
+    const status = calculateChallengeStatus(input.start_date, endDate.toISOString().split('T')[0]);
 
     // Insert challenge
     const { data: challenge, error: challengeError } = await supabase
