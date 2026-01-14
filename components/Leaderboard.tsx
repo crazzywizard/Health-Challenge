@@ -4,9 +4,10 @@ import Image from 'next/image';
 interface LeaderboardProps {
   participants: ParticipantWithProgress[];
   currentProfileId: string | null;
+  durationDays?: number;
 }
 
-export default function Leaderboard({ participants, currentProfileId }: LeaderboardProps) {
+export default function Leaderboard({ participants, currentProfileId, durationDays }: LeaderboardProps) {
   // Sort participants by current_streak (primary) and completion_percentage (secondary)
   const sortedParticipants = [...participants].sort((a, b) => {
     const streakA = a.current_streak || 0;
@@ -105,16 +106,17 @@ export default function Leaderboard({ participants, currentProfileId }: Leaderbo
                       <span className="bg-primary/20 text-primary text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">You</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 mt-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-orange-500 flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C7.03 2 3 6.03 3 11c0 4.97 4.03 9 9 9s9-4.03 9-9c0-4.97-4.03-9-9-9zM4.5 11c0-4.14 3.36-7.5 7.5-7.5s7.5 3.36 7.5 7.5-3.36 7.5-7.5 7.5-7.5-3.36-7.5-7.5zm7.5 4.5c2.48 0 4.5-2.02 4.5-4.5s-2.02-4.5-4.5-4.5-4.5 2.02-4.5 4.5 2.02 4.5 4.5 4.5z" />
-                        </svg>
-                        <span className="font-bold text-sm">{participant.current_streak || 0}</span>
-                      </span>
-                      <span className="text-[10px] text-text-tertiary uppercase font-bold tracking-wider">Streak</span>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                    <div className="flex items-center gap-1">
+                      <span className="text-orange-500 font-bold text-xs">{participant.current_streak || 0}d</span>
+                      <span className="text-[10px] text-text-tertiary uppercase font-bold tracking-tight">Streak</span>
                     </div>
+                    {durationDays && (
+                      <div className="flex items-center gap-1">
+                        <span className="text-primary font-bold text-xs">{participant.days_completed || 0}/{durationDays}</span>
+                        <span className="text-[10px] text-text-tertiary uppercase font-bold tracking-tight">Days</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 

@@ -305,6 +305,7 @@ export default function ChallengeDetailsPage() {
               <Leaderboard 
                 participants={challenge.participants} 
                 currentProfileId={profileId} 
+                durationDays={challenge.duration_days}
               />
             </div>
           ) : (
@@ -363,9 +364,15 @@ export default function ChallengeDetailsPage() {
                         </div>
                         <div>
                           <h4 className="font-bold">{participant.name}</h4>
-                          <div className="flex items-center gap-3 text-xs text-text-secondary">
-                            <span>Streak: <span className="text-orange-500 font-bold">{participant.current_streak || 0} days</span></span>
-                            <span>Total Completion: <span className="text-primary font-bold">{participant.completion_percentage || 0}%</span></span>
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] sm:text-xs text-text-secondary">
+                            <div className="flex items-center gap-1">
+                              <span className="opacity-70 uppercase font-bold tracking-tight">Streak:</span>
+                              <span className="text-orange-500 font-bold">{participant.current_streak || 0}d 🔥</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="opacity-70 uppercase font-bold tracking-tight">Success:</span>
+                              <span className="text-primary font-bold">{participant.days_completed || 0}/{challenge.duration_days} days</span>
+                            </div>
                           </div>
                         </div>
                       </div>

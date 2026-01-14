@@ -69,6 +69,7 @@ export interface ParticipantWithProgress extends Participant {
   progress: DailyProgress[];
   completion_percentage?: number;
   current_streak?: number;
+  days_completed?: number;
 }
 
 // Form types for creating/updating
