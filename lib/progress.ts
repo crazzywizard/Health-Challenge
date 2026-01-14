@@ -62,6 +62,30 @@ export function calculateCompletionPercentage(
 }
 
 /**
+ * Calculates the number of days where ALL rules were completed.
+ */
+export function calculateDaysCompleted(progress: DailyProgress[], rules: Rule[]): number {
+  if (!rules.length) return 0;
+
+  const progressByDate: Record<string, DailyProgress[]> = {};
+  progress.forEach((p) => {
+    if (!progressByDate[p.date]) {
+      progressByDate[p.date] = [];
+    }
+    progressByDate[p.date].push(p);
+  });
+
+  let completedDaysCount = 0;
+  Object.keys(progressByDate).forEach((dateStr) => {
+    if (areAllRulesComplete(progressByDate[dateStr], rules)) {
+      completedDaysCount++;
+    }
+  });
+
+  return completedDaysCount;
+}
+
+/**
  * Helper to check if all rules for a specific date are marked as complete.
  */
 function areAllRulesComplete(dayProgress: DailyProgress[] | undefined, rules: Rule[]): boolean {
@@ -91,5 +115,6 @@ export function enrichParticipantWithProgress(
     progress,
     current_streak: calculateStreak(progress, rules, challengeStartDate),
     completion_percentage: calculateCompletionPercentage(progress, rules, durationDays),
+    days_completed: calculateDaysCompleted(progress, rules),
   };
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'bun:test';
 import { setSystemTime } from 'bun:test';
-import { calculateStreak, calculateCompletionPercentage } from './progress';
+import { calculateStreak, calculateCompletionPercentage, calculateDaysCompleted } from './progress';
 import { DailyProgress, Rule } from '@/app/types';
 
 describe('progress tracking logic', () => {
@@ -124,6 +124,46 @@ describe('progress tracking logic', () => {
         });
       }
       expect(calculateCompletionPercentage(progress, mockRules, duration)).toBe(100);
+    });
+  });
+
+  describe('calculateDaysCompleted', () => {
+    it('returns 0 when there are no rules', () => {
+      expect(calculateDaysCompleted([], [])).toBe(0);
+    });
+
+    it('returns 0 when no progress is logged', () => {
+      expect(calculateDaysCompleted([], mockRules)).toBe(0);
+    });
+
+    it('returns 1 when one day is fully complete', () => {
+      const progress: DailyProgress[] = [
+        { id: '1', participant_id: 'u1', rule_id: '1', date: '2023-01-01', completed: true, value: null, notes: null, created_at: '', updated_at: '' },
+        { id: '2', participant_id: 'u1', rule_id: '2', date: '2023-01-01', completed: true, value: null, notes: null, created_at: '', updated_at: '' },
+      ];
+      expect(calculateDaysCompleted(progress, mockRules)).toBe(1);
+    });
+
+    it('does not count days that are only partially complete', () => {
+      const progress: DailyProgress[] = [
+        { id: '1', participant_id: 'u1', rule_id: '1', date: '2023-01-01', completed: true, value: null, notes: null, created_at: '', updated_at: '' },
+        { id: '2', participant_id: 'u1', rule_id: '2', date: '2023-01-01', completed: false, value: null, notes: null, created_at: '', updated_at: '' },
+      ];
+      expect(calculateDaysCompleted(progress, mockRules)).toBe(0);
+    });
+
+    it('counts multiple completed days correctly', () => {
+      const progress: DailyProgress[] = [
+        // Day 1: Complete
+        { id: '1', participant_id: 'u1', rule_id: '1', date: '2023-01-01', completed: true, value: null, notes: null, created_at: '', updated_at: '' },
+        { id: '2', participant_id: 'u1', rule_id: '2', date: '2023-01-01', completed: true, value: null, notes: null, created_at: '', updated_at: '' },
+        // Day 2: Incomplete
+        { id: '3', participant_id: 'u1', rule_id: '1', date: '2023-01-02', completed: true, value: null, notes: null, created_at: '', updated_at: '' },
+        // Day 3: Complete
+        { id: '4', participant_id: 'u1', rule_id: '1', date: '2023-01-03', completed: true, value: null, notes: null, created_at: '', updated_at: '' },
+        { id: '5', participant_id: 'u1', rule_id: '2', date: '2023-01-03', completed: true, value: null, notes: null, created_at: '', updated_at: '' },
+      ];
+      expect(calculateDaysCompleted(progress, mockRules)).toBe(2);
     });
   });
 });
