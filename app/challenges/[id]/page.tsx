@@ -373,10 +373,6 @@ export default function ChallengeDetailsPage() {
                               <span className="opacity-70 uppercase font-bold tracking-tight">Success:</span>
                               <span className="text-primary font-bold">{participant.days_completed || 0}/{challenge.duration_days} days</span>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <span className="opacity-70 uppercase font-bold tracking-tight">Total:</span>
-                              <span className="text-text font-bold">{participant.completion_percentage || 0}%</span>
-                            </div>
                           </div>
                         </div>
                       </div>
